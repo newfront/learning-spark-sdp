@@ -8,6 +8,30 @@ The `docker-compose.yaml` spins up a standalone Apache Spark 4.1.1 cluster with 
 ### Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#installation) — Python version manager
+
+  ```bash
+  brew install pyenv
+  ```
+
+- [jenv](https://www.jenv.be/) — Java version manager
+
+  ```bash
+  brew install jenv
+  ```
+
+  Add to your shell config (`~/.zshrc` or `~/.bash_profile`):
+
+  ```bash
+  echo 'eval "$(jenv init -)"' >> ~/.zshrc
+  ```
+
+  Enable the `export` plugin so `JAVA_HOME` is set automatically:
+
+  ```bash
+  jenv enable-plugin export
+  ```
+
 - [Astral uv](https://docs.astral.sh/uv/getting-started/installation/) — Python package and project manager
 
   ```bash
