@@ -8,6 +8,11 @@ The `docker-compose.yaml` spins up a standalone Apache Spark 4.1.1 cluster with 
 ### Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- [Astral uv](https://docs.astral.sh/uv/getting-started/installation/) — Python package and project manager
+
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
 
 ### Start the cluster
 
