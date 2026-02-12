@@ -1,0 +1,15 @@
+[project]
+name = "sdp-playground"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "grpcio>=1.78.0",
+    "grpcio-status>=1.78.0",
+    "pandas>=2.3.3",
+    "pyarrow>=23.0.0",
+    "pyspark==4.1.1",
+    "pyyaml>=6.0.3",
+    "zstandard>=0.25.0",
+]

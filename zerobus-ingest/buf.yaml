@@ -1,0 +1,6 @@
+version: v2
+modules:
+  - path: protos
+    name: buf.build/dbx-demos/ecomm
+deps:
+  - buf.build/bufbuild/protovalidate

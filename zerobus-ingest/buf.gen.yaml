@@ -1,0 +1,10 @@
+# Local code generation for Protobuf. For consuming pre-built Python SDKs from the
+# BSR (e.g. after pushing this module), see: https://buf.build/docs/bsr/generated-sdks/python/
+version: v2
+plugins:
+  # Base types for Python (message and enum types)
+  - remote: buf.build/protocolbuffers/python:v33.5
+    out: gen/python
+  # Python stub files for type checking / IDE support
+  - remote: buf.build/protocolbuffers/pyi:v33.5
+    out: gen/python

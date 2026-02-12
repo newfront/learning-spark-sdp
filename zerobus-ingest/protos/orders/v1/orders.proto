@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package orders.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "buf.build/dbx-demos/orders/protobuf/orders/v1;ordersv1";
+
+// OrderStatus represents the lifecycle state of an order.
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_CONFIRMED = 2;
+  ORDER_STATUS_PROCESSING = 3;
+  ORDER_STATUS_SHIPPED = 4;
+  ORDER_STATUS_DELIVERED = 5;
+  ORDER_STATUS_CANCELLED = 6;
+  ORDER_STATUS_REFUNDED = 7;
+}
+
+// PaymentMethod indicates how the order was paid.
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CARD = 1;
+  PAYMENT_METHOD_APPLEPAY = 2;
+  PAYMENT_METHOD_BANK_TRANSFER = 3;
+  PAYMENT_METHOD_OTHER = 4;
+}
+
+// Money represents a decimal amount in a given currency.
+message Money {
+  string currency_code = 1; // e.g. "USD", "EUR"
+  int64 units = 2; // whole units
+  int32 nanos = 3; // fractional part (e.g. cents), -999_999_999 to 999_999_999
+}
+
+// Address is a shipping or billing address.
+message Address {
+  string line_1 = 1;
+  string line_2 = 2;
+  string city = 3;
+  string state_or_province = 4;
+  string postal_code = 5;
+  string country_code = 6; // ISO 3166-1 alpha-2
+}
+
+// OrderLineItem is a single line on an order (one product, quantity, and price).
+message OrderLineItem {
+  string product_id = 1;
+  string sku = 2;
+  string name = 3;
+  int32 quantity = 4;
+  Money unit_price = 5;
+  Money total_price = 6;
+}
+
+// Order represents a typical ecommerce order.
+message Order {
+  string order_id = 1 [(buf.validate.field).required = true];
+  string customer_id = 2;
+  OrderStatus status = 3;
+
+  repeated OrderLineItem line_items = 4;
+  Money subtotal = 5;
+  Money tax = 6;
+  Money shipping_cost = 7;
+  Money total = 8;
+
+  Address shipping_address = 9;
+  Address billing_address = 10;
+
+  PaymentMethod payment_method = 11;
+  string payment_id = 12; // external payment reference
+
+  int64 created_at = 13; // Unix timestamp (seconds)
+  int64 updated_at = 14;
+}
