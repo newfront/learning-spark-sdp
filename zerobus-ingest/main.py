@@ -14,4 +14,10 @@ if __name__ == "__main__":
         load_dotenv()
     config = Config.databricks()
     client = WorkspaceClient(host=config["host"], token=config["token"])
-    main(client, generate=args.generate, count=args.count)
+    main(
+        client,
+        generate=args.generate,
+        publish=args.publish,
+        count=args.count,
+        config=config if args.publish else None,
+    )
