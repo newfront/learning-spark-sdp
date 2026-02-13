@@ -80,6 +80,105 @@ uv run main.py --env prod --publish --count 50
 
 ---
 
+## TableUtils
+
+`TableUtils` provides helpers for Unity Catalog table operations using the Databricks SDK `WorkspaceClient` (same credentials as your workspace). Use `table_exists` to check if a table exists before publishing, and `create_table` to create a managed Delta table (e.g. for Zerobus ingest) without passing a storage path—the location is derived from the schema’s storage root.
+
+### Check table exists and create from a protobuf descriptor
+
+A common workflow is: **check if the table exists in Databricks; if not, derive the table schema from your protobuf message and create the table.** That way you can ensure the Unity Catalog table exists (and matches your proto) before running `--publish` or writing with `ZerobusWriter`.
+
+- **`table_exists(workspace_client, catalog, schema, table)`** — Returns `True` if the table exists in the metastore.
+- **`descriptor_to_columns(descriptor: Descriptor) -> list[ColumnInfo]`** — Converts a protobuf message `DESCRIPTOR` (e.g. `Order.DESCRIPTOR` from your generated `orders_pb2`) into a list of Unity Catalog `ColumnInfo`. Uses the inverse of the [zerobus generate_proto type mappings](https://github.com/databricks/zerobus-sdk-py/blob/main/zerobus/tools/generate_proto.py): scalars (int32→INT, int64→LONG, string→STRING, etc.), enums→INT, nested messages→`STRUCT<...>`, repeated→`ARRAY<...>`. The result is suitable for `create_table(..., columns=...)`.
+- **`pretty_print_columns(columns: list[ColumnInfo]) -> str`** — Formats a list of `ColumnInfo` as a readable table string (one column per line with name and type). Use this to preview the schema before creating the table.
+
+**Example: ensure table exists, creating it from the Order protobuf if missing**
+
+```python
+from dotenv import load_dotenv
+
+from databricks.sdk import WorkspaceClient
+
+from zerobus_ingest.config import Config
+from zerobus_ingest.datagen import Orders
+from zerobus_ingest.utils import TableUtils
+
+load_dotenv()
+config = Config.databricks()
+client = WorkspaceClient(host=config["host"], token=config["token"])
+
+catalog, schema, table = config["catalog"], config["schema"], config["table"]
+
+if not TableUtils.table_exists(client, catalog, schema, table):
+    # Get ColumnInfo from the Order message DESCRIPTOR
+    descriptor = Orders.generate_orders(1, seed=42)[0].DESCRIPTOR
+    columns = TableUtils.descriptor_to_columns(descriptor)
+
+    # Optional: preview the table schema
+    print("Table schema (from proto):")
+    print(TableUtils.pretty_print_columns(columns))
+
+    TableUtils.create_table(client, catalog, schema, table, columns=columns)
+    print(f"Created table {catalog}.{schema}.{table}")
+else:
+    print("Table already exists.")
+```
+
+### create_table
+
+Creates a table in the metastore. Defaults to a **managed** Delta table; if you omit `storage_location`, it is derived from the schema’s `storage_root`. For external tables, pass `storage_location` and `table_type=TableType.EXTERNAL`.
+
+You can pass **columns** as a list of `ColumnInfo` from `databricks.sdk.service.catalog` (use `name` and `type_name` with `ColumnTypeName`), and **properties** for Delta table properties (e.g. change data feed, column mapping).
+
+**Example: create a managed Delta table with columns and Delta properties**
+
+```python
+from dotenv import load_dotenv
+
+from databricks.sdk import WorkspaceClient
+from databricks.sdk.service.catalog import (
+    ColumnInfo,
+    ColumnTypeName,
+    TableType,
+)
+
+from zerobus_ingest.config import Config
+from zerobus_ingest.utils import TableUtils
+
+load_dotenv()
+config = Config.databricks()
+
+client = WorkspaceClient(host=config["host"], token=config["token"])
+
+columns = [
+    ColumnInfo(name="order_id", type_name=ColumnTypeName.STRING),
+    ColumnInfo(name="customer_id", type_name=ColumnTypeName.STRING),
+    ColumnInfo(name="total_units", type_name=ColumnTypeName.LONG),
+]
+
+delta_properties = {
+    "delta.enableChangeDataFeed": "true",
+    "delta.columnMapping.mode": "name",
+}
+
+table_info = TableUtils.create_table(
+    client,
+    catalog=config["catalog"],
+    schema=config["schema"],
+    table=config["table"],
+    columns=columns,
+    properties=delta_properties,
+)
+print(f"Created table {table_info.full_name}")
+```
+
+- **ColumnInfo** (`databricks.sdk.service.catalog`): use `name` and `type_name` (e.g. `ColumnTypeName.STRING`, `ColumnTypeName.LONG`, `ColumnTypeName.DOUBLE`, `ColumnTypeName.BOOLEAN`, `ColumnTypeName.TIMESTAMP`). Optional: `comment`, `nullable`, etc.
+- **Delta properties** (optional): e.g. `delta.enableChangeDataFeed` for change data feed, `delta.columnMapping.mode` for column mapping. See [Delta table properties](https://docs.delta.io/table-properties).
+
+To create an **external** Delta table with your own path, pass `storage_location` and `table_type=TableType.EXTERNAL`.
+
+---
+
 ## ZerobusWriter
 
 `ZerobusWriter` wraps the Zerobus ingest SDK to write protobuf (or dict) records to a Zerobus stream. The stream is created lazily on the first `write()`; when the record is a protobuf message, the message’s `DESCRIPTOR` is used for `TableProperties` so the stream schema matches the message type.

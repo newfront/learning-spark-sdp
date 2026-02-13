@@ -4,9 +4,10 @@ import argparse
 from typing import Any
 
 from databricks.sdk import WorkspaceClient
+from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions
 
 from zerobus_ingest.datagen import Orders
-from zerobus_ingest.utils import ZerobusWriter
+from zerobus_ingest.utils import TableUtils, ZerobusWriter
 
 
 def parse_args():
@@ -32,7 +33,7 @@ def parse_args():
         type=int,
         default=100,
         metavar="N",
-        help="Number of records to generate when --generate or --publish (default: 100).",
+        help="Number of records to generate (default: 100).",
     )
     return parser.parse_args()
 
@@ -52,9 +53,24 @@ def main(
     if publish:
         if not config:
             raise ValueError("config is required when publish=True")
+        table_name = f"{config['catalog']}.{config['schema']}.{config['table']}"
+        if not TableUtils.table_exists(
+            workspace_client,
+            catalog=config["catalog"],
+            schema=config["schema"],
+            table=config["table"],
+        ):
+            raise ValueError(
+                f"Table {table_name} does not exist in the workspace. "
+                "Create the table before publishing."
+            )
         orders = Orders.generate_orders(count, seed=42)
-        with ZerobusWriter.from_config(config) as writer:
+        stream_options = StreamConfigurationOptions(record_type=RecordType.PROTO)
+        with ZerobusWriter.from_config(config).with_stream_options(stream_options) as writer:
             for order in orders:
-                writer.write(order)
+                # we can use wait_for_ack()
+                ack = writer.write(order)
+                ack.wait_for_ack()
+                logger.info(f"Published order {order.order_id} to Zerobus.")
             writer.flush()
         print(f"Published {len(orders)} orders to Zerobus.")

@@ -12,7 +12,9 @@ def test_get_descriptor_returns_none_for_non_protobuf():
 
 
 def test_get_descriptor_from_generated_order():
-    """get_descriptor(order) returns the Order message DESCRIPTOR with expected details."""
+    """
+    get_descriptor(order)
+    returns the Order message DESCRIPTOR with expected details."""
     orders = Orders.generate_orders(1, seed=42)
     assert len(orders) == 1
     order = orders[0]

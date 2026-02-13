@@ -18,4 +18,4 @@ test:
 # (read/ingest orders). Output is Protobuf binary format; --exclude-source-info
 # keeps the file smaller. See: https://buf.build/docs/reference/descriptors/
 descriptor:
-	buf build -o descriptor.bin --exclude-source-info
+	buf build -o gen/python/orders/v1/descriptor.bin --exclude-source-info

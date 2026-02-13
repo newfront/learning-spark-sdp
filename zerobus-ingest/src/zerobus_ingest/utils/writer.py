@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from google.protobuf.descriptor import Descriptor
-from zerobus.sdk.shared.definitions import StreamConfigurationOptions, TableProperties
+from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions, TableProperties
 from zerobus.sdk.sync import ZerobusSdk, ZerobusStream
 
 
@@ -46,7 +46,13 @@ class ZerobusWriter:
             schema=config["schema"],
             table=config["table"],
         )
-        # Allow caller to set stream_options after if needed
+
+    def with_stream_options(
+        self, options: StreamConfigurationOptions
+    ) -> ZerobusWriter:
+        """Overwrite stream options. Call before any write() so they apply when the stream is created."""
+        self._stream_options = options
+        return self
 
     @staticmethod
     def get_descriptor(record: Any) -> Descriptor | None:
@@ -77,7 +83,9 @@ class ZerobusWriter:
         return self._stream
 
     def write(self, record: Any) -> Any:
-        """Ingest a single record (protobuf Message or dict). Returns RecordAcknowledgment."""
+        """
+        Ingest a single record (protobuf Message or dict).
+        Returns RecordAcknowledgment."""
         descriptor = self.get_descriptor(record)
         stream = self._ensure_stream(descriptor)
         return stream.ingest_record(record)
