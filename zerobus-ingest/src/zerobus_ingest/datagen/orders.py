@@ -3,12 +3,13 @@
 import random
 import sys
 import time
+import uuid
 from pathlib import Path
 
 import protovalidate
 
-# Make gen/python importable (orders.v1.orders_pb2)
-_root = Path(__file__).resolve().parent.parent
+# Make gen/python importable (orders.v1.orders_pb2); project root is two levels up.
+_root = Path(__file__).resolve().parent.parent.parent.parent
 _gen = _root / "gen" / "python"
 if str(_gen) not in sys.path:
     sys.path.insert(0, str(_gen))
@@ -49,15 +50,21 @@ def _address(
     return a
 
 
-def _line_item(product_id: str, sku: str, name: str, quantity: int, unit_cents: int) -> OrderLineItem:
+def _line_item(
+    product_id: str, sku: str, name: str, quantity: int, unit_cents: int
+) -> OrderLineItem:
     total_cents = quantity * unit_cents
     item = OrderLineItem()
     item.product_id = product_id
     item.sku = sku
     item.name = name
     item.quantity = quantity
-    item.unit_price.CopyFrom(_money("USD", unit_cents // 100, (unit_cents % 100) * 10_000_000))
-    item.total_price.CopyFrom(_money("USD", total_cents // 100, (total_cents % 100) * 10_000_000))
+    item.unit_price.CopyFrom(
+        _money("USD", unit_cents // 100, (unit_cents % 100) * 10_000_000)
+    )
+    item.total_price.CopyFrom(
+        _money("USD", total_cents // 100, (total_cents % 100) * 10_000_000)
+    )
     return item
 
 
@@ -93,7 +100,7 @@ class Orders:
         now = int(time.time())
         orders: list[Order] = []
         for i in range(count):
-            order_id = f"ord-{now}-{i:04d}"
+            order_id = str(uuid.uuid4())
             customer_id = random.choice(Orders._CUSTOMER_IDS)
             num_items = random.randint(1, 4)
             line_items: list[OrderLineItem] = []
@@ -119,14 +126,26 @@ class Orders:
             o.customer_id = customer_id
             o.status = OrderStatus.ORDER_STATUS_CONFIRMED
             o.line_items.extend(line_items)
-            o.subtotal.CopyFrom(_money("USD", subtotal_cents // 100, (subtotal_cents % 100) * 10_000_000))
-            o.tax.CopyFrom(_money("USD", tax_cents // 100, (tax_cents % 100) * 10_000_000))
-            o.shipping_cost.CopyFrom(_money("USD", shipping_cents // 100, (shipping_cents % 100) * 10_000_000))
-            o.total.CopyFrom(_money("USD", total_cents // 100, (total_cents % 100) * 10_000_000))
+            o.subtotal.CopyFrom(
+                _money(
+                    "USD", subtotal_cents // 100, (subtotal_cents % 100) * 10_000_000
+                )
+            )
+            o.tax.CopyFrom(
+                _money("USD", tax_cents // 100, (tax_cents % 100) * 10_000_000)
+            )
+            o.shipping_cost.CopyFrom(
+                _money(
+                    "USD", shipping_cents // 100, (shipping_cents % 100) * 10_000_000
+                )
+            )
+            o.total.CopyFrom(
+                _money("USD", total_cents // 100, (total_cents % 100) * 10_000_000)
+            )
             o.shipping_address.CopyFrom(_address(line_1, city, state, zip_code, "US"))
             o.billing_address.CopyFrom(_address(line_1, city, state, zip_code, "US"))
             o.payment_method = PaymentMethod.PAYMENT_METHOD_CARD
-            o.payment_id = f"pay-{order_id}"
+            o.payment_id = str(uuid.uuid4())
             o.created_at = now
             o.updated_at = now
 
@@ -135,6 +154,5 @@ class Orders:
             except Exception as e:
                 print(f"Validation: {e}", file=sys.stderr)
             orders.append(o)
-        
-        
+
         return orders
