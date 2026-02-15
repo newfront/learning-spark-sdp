@@ -3,11 +3,15 @@ name = "zerobus-ingest"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "bufbuild-protovalidate-protocolbuffers-python",
     "databricks-sdk>=0.88.0",
+    "databricks-connect>=18.0.0",
     "databricks-zerobus-ingest-sdk>=0.2.0",
+    "delta-spark==4.0.1",
+    "grpcio>=1.78.0",
+    "grpcio-status>=1.78.0",
     "protobuf>=6.33.0",
     "protovalidate>=1.1.1",
     "python-dotenv>=1.2.1",
@@ -15,3 +19,28 @@ dependencies = [
 
 [tool.uv]
 extra-index-url = ["https://buf.build/gen/python"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = ["src", "tests", "main.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.1",
+]
+
+[project.urls]
+Repository = "https://github.com/newfront/learning-spark-sdp"
+Releases = "https://github.com/newfront/learning-spark-sdp/releases"
+
+[build-system]
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"

@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16orders/v1/orders.proto\x12\torders.v1\x1a\x1b\x62uf/validate/validate.proto\"X\n\x05Money\x12#\n\rcurrency_code\x18\x01 \x01(\tR\x0c\x63urrencyCode\x12\x14\n\x05units\x18\x02 \x01(\x03R\x05units\x12\x14\n\x05nanos\x18\x03 \x01(\x05R\x05nanos\"\xbb\x01\n\x07\x41\x64\x64ress\x12\x15\n\x06line_1\x18\x01 \x01(\tR\x05line1\x12\x15\n\x06line_2\x18\x02 \x01(\tR\x05line2\x12\x12\n\x04\x63ity\x18\x03 \x01(\tR\x04\x63ity\x12*\n\x11state_or_province\x18\x04 \x01(\tR\x0fstateOrProvince\x12\x1f\n\x0bpostal_code\x18\x05 \x01(\tR\npostalCode\x12!\n\x0c\x63ountry_code\x18\x06 \x01(\tR\x0b\x63ountryCode\"\xd4\x01\n\rOrderLineItem\x12\x1d\n\nproduct_id\x18\x01 \x01(\tR\tproductId\x12\x10\n\x03sku\x18\x02 \x01(\tR\x03sku\x12\x12\n\x04name\x18\x03 \x01(\tR\x04name\x12\x1a\n\x08quantity\x18\x04 \x01(\x05R\x08quantity\x12/\n\nunit_price\x18\x05 \x01(\x0b\x32\x10.orders.v1.MoneyR\tunitPrice\x12\x31\n\x0btotal_price\x18\x06 \x01(\x0b\x32\x10.orders.v1.MoneyR\ntotalPrice\"\xff\x04\n\x05Order\x12!\n\x08order_id\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x07orderId\x12\x1f\n\x0b\x63ustomer_id\x18\x02 \x01(\tR\ncustomerId\x12.\n\x06status\x18\x03 \x01(\x0e\x32\x16.orders.v1.OrderStatusR\x06status\x12\x37\n\nline_items\x18\x04 \x03(\x0b\x32\x18.orders.v1.OrderLineItemR\tlineItems\x12,\n\x08subtotal\x18\x05 \x01(\x0b\x32\x10.orders.v1.MoneyR\x08subtotal\x12\"\n\x03tax\x18\x06 \x01(\x0b\x32\x10.orders.v1.MoneyR\x03tax\x12\x35\n\rshipping_cost\x18\x07 \x01(\x0b\x32\x10.orders.v1.MoneyR\x0cshippingCost\x12&\n\x05total\x18\x08 \x01(\x0b\x32\x10.orders.v1.MoneyR\x05total\x12=\n\x10shipping_address\x18\t \x01(\x0b\x32\x12.orders.v1.AddressR\x0fshippingAddress\x12;\n\x0f\x62illing_address\x18\n \x01(\x0b\x32\x12.orders.v1.AddressR\x0e\x62illingAddress\x12?\n\x0epayment_method\x18\x0b \x01(\x0e\x32\x18.orders.v1.PaymentMethodR\rpaymentMethod\x12\x1d\n\npayment_id\x18\x0c \x01(\tR\tpaymentId\x12\x1d\n\ncreated_at\x18\r \x01(\x03R\tcreatedAt\x12\x1d\n\nupdated_at\x18\x0e \x01(\x03R\tupdatedAt*\xeb\x01\n\x0bOrderStatus\x12\x1c\n\x18ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x18\n\x14ORDER_STATUS_PENDING\x10\x01\x12\x1a\n\x16ORDER_STATUS_CONFIRMED\x10\x02\x12\x1b\n\x17ORDER_STATUS_PROCESSING\x10\x03\x12\x18\n\x14ORDER_STATUS_SHIPPED\x10\x04\x12\x1a\n\x16ORDER_STATUS_DELIVERED\x10\x05\x12\x1a\n\x16ORDER_STATUS_CANCELLED\x10\x06\x12\x19\n\x15ORDER_STATUS_REFUNDED\x10\x07*\xa1\x01\n\rPaymentMethod\x12\x1e\n\x1aPAYMENT_METHOD_UNSPECIFIED\x10\x00\x12\x17\n\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1b\n\x17PAYMENT_METHOD_APPLEPAY\x10\x02\x12 \n\x1cPAYMENT_METHOD_BANK_TRANSFER\x10\x03\x12\x18\n\x14PAYMENT_METHOD_OTHER\x10\x04\x42\x38Z6buf.build/dbx-demos/orders/protobuf/orders/v1;ordersv1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16orders/v1/orders.proto\x12\torders.v1\x1a\x1b\x62uf/validate/validate.proto\"\x83\x01\n\x05Money\x12-\n\rcurrency_code\x18\x01 \x01(\tB\x08\xbaH\x05r\x03\x98\x01\x03R\x0c\x63urrencyCode\x12\x1d\n\x05units\x18\x02 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x05units\x12,\n\x05nanos\x18\x03 \x01(\x05\x42\x16\xbaH\x13\x1a\x11\x18\xff\x93\xeb\xdc\x03(\x81\xec\x94\xa3\xfc\xff\xff\xff\xff\x01R\x05nanos\"\xe0\x01\n\x07\x41\x64\x64ress\x12\x1e\n\x06line_1\x18\x01 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x05line1\x12\x15\n\x06line_2\x18\x02 \x01(\tR\x05line2\x12\x1b\n\x04\x63ity\x18\x03 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x04\x63ity\x12*\n\x11state_or_province\x18\x04 \x01(\tR\x0fstateOrProvince\x12(\n\x0bpostal_code\x18\x05 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\npostalCode\x12+\n\x0c\x63ountry_code\x18\x06 \x01(\tB\x08\xbaH\x05r\x03\x98\x01\x02R\x0b\x63ountryCode\"\xf8\x01\n\rOrderLineItem\x12&\n\nproduct_id\x18\x01 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\tproductId\x12\x19\n\x03sku\x18\x02 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x03sku\x12\x1b\n\x04name\x18\x03 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x04name\x12#\n\x08quantity\x18\x04 \x01(\x05\x42\x07\xbaH\x04\x1a\x02 \x00R\x08quantity\x12/\n\nunit_price\x18\x05 \x01(\x0b\x32\x10.orders.v1.MoneyR\tunitPrice\x12\x31\n\x0btotal_price\x18\x06 \x01(\x0b\x32\x10.orders.v1.MoneyR\ntotalPrice\"\xb5\x05\n\x05Order\x12&\n\x08order_id\x18\x01 \x01(\tB\x0b\xbaH\x08r\x03\xb0\x01\x01\xc8\x01\x01R\x07orderId\x12(\n\x0b\x63ustomer_id\x18\x02 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\ncustomerId\x12\x38\n\x06status\x18\x03 \x01(\x0e\x32\x16.orders.v1.OrderStatusB\x08\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12\x41\n\nline_items\x18\x04 \x03(\x0b\x32\x18.orders.v1.OrderLineItemB\x08\xbaH\x05\x92\x01\x02\x08\x01R\tlineItems\x12,\n\x08subtotal\x18\x05 \x01(\x0b\x32\x10.orders.v1.MoneyR\x08subtotal\x12\"\n\x03tax\x18\x06 \x01(\x0b\x32\x10.orders.v1.MoneyR\x03tax\x12\x35\n\rshipping_cost\x18\x07 \x01(\x0b\x32\x10.orders.v1.MoneyR\x0cshippingCost\x12&\n\x05total\x18\x08 \x01(\x0b\x32\x10.orders.v1.MoneyR\x05total\x12=\n\x10shipping_address\x18\t \x01(\x0b\x32\x12.orders.v1.AddressR\x0fshippingAddress\x12;\n\x0f\x62illing_address\x18\n \x01(\x0b\x32\x12.orders.v1.AddressR\x0e\x62illingAddress\x12I\n\x0epayment_method\x18\x0b \x01(\x0e\x32\x18.orders.v1.PaymentMethodB\x08\xbaH\x05\x82\x01\x02\x10\x01R\rpaymentMethod\x12\'\n\npayment_id\x18\x0c \x01(\tB\x08\xbaH\x05r\x03\xb0\x01\x01R\tpaymentId\x12\x1d\n\ncreated_at\x18\r \x01(\x03R\tcreatedAt\x12\x1d\n\nupdated_at\x18\x0e \x01(\x03R\tupdatedAt*\xeb\x01\n\x0bOrderStatus\x12\x1c\n\x18ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x18\n\x14ORDER_STATUS_PENDING\x10\x01\x12\x1a\n\x16ORDER_STATUS_CONFIRMED\x10\x02\x12\x1b\n\x17ORDER_STATUS_PROCESSING\x10\x03\x12\x18\n\x14ORDER_STATUS_SHIPPED\x10\x04\x12\x1a\n\x16ORDER_STATUS_DELIVERED\x10\x05\x12\x1a\n\x16ORDER_STATUS_CANCELLED\x10\x06\x12\x19\n\x15ORDER_STATUS_REFUNDED\x10\x07*\xa1\x01\n\rPaymentMethod\x12\x1e\n\x1aPAYMENT_METHOD_UNSPECIFIED\x10\x00\x12\x17\n\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1b\n\x17PAYMENT_METHOD_APPLEPAY\x10\x02\x12 \n\x1cPAYMENT_METHOD_BANK_TRANSFER\x10\x03\x12\x18\n\x14PAYMENT_METHOD_OTHER\x10\x04\x42\x38Z6buf.build/dbx-demos/orders/protobuf/orders/v1;ordersv1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,18 +33,50 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'orders.v1.orders_pb2', _glo
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z6buf.build/dbx-demos/orders/protobuf/orders/v1;ordersv1'
+  _globals['_MONEY'].fields_by_name['currency_code']._loaded_options = None
+  _globals['_MONEY'].fields_by_name['currency_code']._serialized_options = b'\272H\005r\003\230\001\003'
+  _globals['_MONEY'].fields_by_name['units']._loaded_options = None
+  _globals['_MONEY'].fields_by_name['units']._serialized_options = b'\272H\004\"\002(\000'
+  _globals['_MONEY'].fields_by_name['nanos']._loaded_options = None
+  _globals['_MONEY'].fields_by_name['nanos']._serialized_options = b'\272H\023\032\021\030\377\223\353\334\003(\201\354\224\243\374\377\377\377\377\001'
+  _globals['_ADDRESS'].fields_by_name['line_1']._loaded_options = None
+  _globals['_ADDRESS'].fields_by_name['line_1']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ADDRESS'].fields_by_name['city']._loaded_options = None
+  _globals['_ADDRESS'].fields_by_name['city']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ADDRESS'].fields_by_name['postal_code']._loaded_options = None
+  _globals['_ADDRESS'].fields_by_name['postal_code']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ADDRESS'].fields_by_name['country_code']._loaded_options = None
+  _globals['_ADDRESS'].fields_by_name['country_code']._serialized_options = b'\272H\005r\003\230\001\002'
+  _globals['_ORDERLINEITEM'].fields_by_name['product_id']._loaded_options = None
+  _globals['_ORDERLINEITEM'].fields_by_name['product_id']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ORDERLINEITEM'].fields_by_name['sku']._loaded_options = None
+  _globals['_ORDERLINEITEM'].fields_by_name['sku']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ORDERLINEITEM'].fields_by_name['name']._loaded_options = None
+  _globals['_ORDERLINEITEM'].fields_by_name['name']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ORDERLINEITEM'].fields_by_name['quantity']._loaded_options = None
+  _globals['_ORDERLINEITEM'].fields_by_name['quantity']._serialized_options = b'\272H\004\032\002 \000'
   _globals['_ORDER'].fields_by_name['order_id']._loaded_options = None
-  _globals['_ORDER'].fields_by_name['order_id']._serialized_options = b'\272H\003\310\001\001'
-  _globals['_ORDERSTATUS']._serialized_start=1204
-  _globals['_ORDERSTATUS']._serialized_end=1439
-  _globals['_PAYMENTMETHOD']._serialized_start=1442
-  _globals['_PAYMENTMETHOD']._serialized_end=1603
-  _globals['_MONEY']._serialized_start=66
-  _globals['_MONEY']._serialized_end=154
-  _globals['_ADDRESS']._serialized_start=157
-  _globals['_ADDRESS']._serialized_end=344
-  _globals['_ORDERLINEITEM']._serialized_start=347
-  _globals['_ORDERLINEITEM']._serialized_end=559
-  _globals['_ORDER']._serialized_start=562
-  _globals['_ORDER']._serialized_end=1201
+  _globals['_ORDER'].fields_by_name['order_id']._serialized_options = b'\272H\010r\003\260\001\001\310\001\001'
+  _globals['_ORDER'].fields_by_name['customer_id']._loaded_options = None
+  _globals['_ORDER'].fields_by_name['customer_id']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ORDER'].fields_by_name['status']._loaded_options = None
+  _globals['_ORDER'].fields_by_name['status']._serialized_options = b'\272H\005\202\001\002\020\001'
+  _globals['_ORDER'].fields_by_name['line_items']._loaded_options = None
+  _globals['_ORDER'].fields_by_name['line_items']._serialized_options = b'\272H\005\222\001\002\010\001'
+  _globals['_ORDER'].fields_by_name['payment_method']._loaded_options = None
+  _globals['_ORDER'].fields_by_name['payment_method']._serialized_options = b'\272H\005\202\001\002\020\001'
+  _globals['_ORDER'].fields_by_name['payment_id']._loaded_options = None
+  _globals['_ORDER'].fields_by_name['payment_id']._serialized_options = b'\272H\005r\003\260\001\001'
+  _globals['_ORDERSTATUS']._serialized_start=1375
+  _globals['_ORDERSTATUS']._serialized_end=1610
+  _globals['_PAYMENTMETHOD']._serialized_start=1613
+  _globals['_PAYMENTMETHOD']._serialized_end=1774
+  _globals['_MONEY']._serialized_start=67
+  _globals['_MONEY']._serialized_end=198
+  _globals['_ADDRESS']._serialized_start=201
+  _globals['_ADDRESS']._serialized_end=425
+  _globals['_ORDERLINEITEM']._serialized_start=428
+  _globals['_ORDERLINEITEM']._serialized_end=676
+  _globals['_ORDER']._serialized_start=679
+  _globals['_ORDER']._serialized_end=1372
 # @@protoc_insertion_point(module_scope)

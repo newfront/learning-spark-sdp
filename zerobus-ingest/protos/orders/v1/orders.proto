@@ -29,38 +29,44 @@ enum PaymentMethod {
 
 // Money represents a decimal amount in a given currency.
 message Money {
-  string currency_code = 1; // e.g. "USD", "EUR"
-  int64 units = 2; // whole units
-  int32 nanos = 3; // fractional part (e.g. cents), -999_999_999 to 999_999_999
+  string currency_code = 1 [(buf.validate.field).string.len = 3]; // e.g. "USD", "EUR" (ISO 4217)
+  int64 units = 2 [(buf.validate.field).int64.gte = 0]; // whole units
+  int32 nanos = 3 [(buf.validate.field).int32 = {
+    gte: -999999999
+    lte: 999999999
+  }]; // fractional part (e.g. cents)
 }
 
 // Address is a shipping or billing address.
 message Address {
-  string line_1 = 1;
+  string line_1 = 1 [(buf.validate.field).string.min_len = 1];
   string line_2 = 2;
-  string city = 3;
+  string city = 3 [(buf.validate.field).string.min_len = 1];
   string state_or_province = 4;
-  string postal_code = 5;
-  string country_code = 6; // ISO 3166-1 alpha-2
+  string postal_code = 5 [(buf.validate.field).string.min_len = 1];
+  string country_code = 6 [(buf.validate.field).string.len = 2]; // ISO 3166-1 alpha-2
 }
 
 // OrderLineItem is a single line on an order (one product, quantity, and price).
 message OrderLineItem {
-  string product_id = 1;
-  string sku = 2;
-  string name = 3;
-  int32 quantity = 4;
+  string product_id = 1 [(buf.validate.field).string.min_len = 1];
+  string sku = 2 [(buf.validate.field).string.min_len = 1];
+  string name = 3 [(buf.validate.field).string.min_len = 1];
+  int32 quantity = 4 [(buf.validate.field).int32.gt = 0];
   Money unit_price = 5;
   Money total_price = 6;
 }
 
 // Order represents a typical ecommerce order.
 message Order {
-  string order_id = 1 [(buf.validate.field).required = true];
-  string customer_id = 2;
-  OrderStatus status = 3;
+  string order_id = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true
+  ];
+  string customer_id = 2 [(buf.validate.field).string.min_len = 1];
+  OrderStatus status = 3 [(buf.validate.field).enum.defined_only = true];
 
-  repeated OrderLineItem line_items = 4;
+  repeated OrderLineItem line_items = 4 [(buf.validate.field).repeated.min_items = 1];
   Money subtotal = 5;
   Money tax = 6;
   Money shipping_cost = 7;
@@ -69,8 +75,8 @@ message Order {
   Address shipping_address = 9;
   Address billing_address = 10;
 
-  PaymentMethod payment_method = 11;
-  string payment_id = 12; // external payment reference
+  PaymentMethod payment_method = 11 [(buf.validate.field).enum.defined_only = true];
+  string payment_id = 12 [(buf.validate.field).string.uuid = true]; // external payment reference (UUID v4)
 
   int64 created_at = 13; // Unix timestamp (seconds)
   int64 updated_at = 14;
