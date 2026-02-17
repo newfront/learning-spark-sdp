@@ -1,13 +1,41 @@
 """CLI and main entry logic for zerobus-ingest."""
 
 import argparse
+from pathlib import Path
 from typing import Any
 
+from google.protobuf import descriptor_pb2
+from google.protobuf.descriptor_pool import DescriptorPool
 from databricks.sdk import WorkspaceClient
 from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions
 
 from zerobus_ingest.datagen import Orders
 from zerobus_ingest.utils import TableUtils, ZerobusWriter
+
+
+def _load_descriptor_from_binary(path: str | Path, message_name: str):
+    """Load a message Descriptor from a binary FileDescriptorSet file.
+
+    The file should be a serialized FileDescriptorSet (e.g. from
+    protoc --descriptor_set_out=file.pb). message_name is the full protobuf
+    message name (e.g. 'orders.v1.Order').
+    """
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"Descriptor file not found: {path}")
+    with path.open("rb") as f:
+        fs = descriptor_pb2.FileDescriptorSet()
+        fs.ParseFromString(f.read())
+    pool = DescriptorPool()
+    for fp in fs.file:
+        pool.Add(fp)
+    desc = pool.FindMessageTypeByName(message_name)
+    if desc is None:
+        raise ValueError(
+            f"Message {message_name!r} not found in descriptor file. "
+            "Use the full protobuf message name (e.g. orders.v1.Order)."
+        )
+    return desc
 
 
 def parse_args():
@@ -35,6 +63,25 @@ def parse_args():
         metavar="N",
         help="Number of records to generate (default: 100).",
     )
+    parser.add_argument(
+        "--create-table",
+        action="store_true",
+        help="If the table does not exist, create it using a binary protobuf descriptor.",
+    )
+    parser.add_argument(
+        "--descriptor-path",
+        type=str,
+        default=None,
+        metavar="PATH",
+        help="Path to a binary FileDescriptorSet (required with --create-table).",
+    )
+    parser.add_argument(
+        "--message-name",
+        type=str,
+        default=None,
+        metavar="NAME",
+        help="Full protobuf message name, e.g. orders.v1.Order (required with --create-table).",
+    )
     return parser.parse_args()
 
 
@@ -44,8 +91,27 @@ def main(
     publish: bool | None = None,
     count: int = 100,
     config: dict[str, Any] | None = None,
+    create_table: bool = False,
+    descriptor_path: str | None = None,
+    message_name: str | None = None,
 ) -> None:
     # use workspace_client for Databricks API calls
+    if create_table:
+        if not config:
+            raise ValueError("config is required when --create-table is set")
+        if not descriptor_path or not message_name:
+            raise ValueError(
+                "--descriptor-path and --message-name are required when --create-table is set"
+            )
+        catalog, schema, table = config["catalog"], config["schema"], config["table"]
+        if TableUtils.table_exists(workspace_client, catalog, schema, table):
+            print(f"Table {catalog}.{schema}.{table} already exists.")
+            return
+        descriptor = _load_descriptor_from_binary(descriptor_path, message_name)
+        columns = TableUtils.descriptor_to_columns(descriptor)
+        TableUtils.create_table(workspace_client, catalog, schema, table, columns=columns)
+        print(f"Created table {catalog}.{schema}.{table}")
+
     if generate:
         orders = Orders.generate_orders(count, seed=42)
         print(orders)
@@ -71,6 +137,5 @@ def main(
                 # we can use wait_for_ack()
                 ack = writer.write(order)
                 ack.wait_for_ack()
-                logger.info(f"Published order {order.order_id} to Zerobus.")
             writer.flush()
         print(f"Published {len(orders)} orders to Zerobus.")

@@ -33,6 +33,37 @@ _PROTO_SCALAR_TO_UC: dict[int, ColumnTypeName] = {
 }
 # TYPE_ENUM -> INT (store enum as integer in Delta)
 
+# Spark DataType JSON for scalar ColumnTypeName (required by Create Table API).
+_SCALAR_TYPE_JSON: dict[ColumnTypeName, str] = {
+    ColumnTypeName.STRING: '{"type": "string"}',
+    ColumnTypeName.INT: '{"type": "integer"}',
+    ColumnTypeName.LONG: '{"type": "long"}',
+    ColumnTypeName.FLOAT: '{"type": "float"}',
+    ColumnTypeName.DOUBLE: '{"type": "double"}',
+    ColumnTypeName.BOOLEAN: '{"type": "boolean"}',
+    ColumnTypeName.BINARY: '{"type": "binary"}',
+}
+
+
+def _field_to_type_json(field: FieldDescriptor, depth: int = 0) -> str:
+    """Return Spark DataType JSON for a field (for Create Table API type_json)."""
+    if depth > 50:
+        raise ValueError("Proto nesting too deep")
+    kind = field.type
+    if kind == FieldDescriptor.TYPE_MESSAGE:
+        msg_desc = field.message_type
+        fields_json = []
+        for i, f in enumerate(msg_desc.fields, start=1):
+            fj = _field_to_type_json(f, depth + 1)
+            fields_json.append(f'{{"name": "{f.name}", "type": {fj}, "nullable": true}}')
+        return '{"type": "struct", "fields": [' + ", ".join(fields_json) + "]}"
+    if kind == FieldDescriptor.TYPE_ENUM:
+        return '{"type": "integer"}'
+    scalar = _PROTO_SCALAR_TO_UC.get(kind)
+    if scalar is not None:
+        return _SCALAR_TYPE_JSON.get(scalar, '{"type": "string"}')
+    return '{"type": "string"}'
+
 
 def _field_to_uc_type_text(field: FieldDescriptor, depth: int = 0) -> str:
     """Return Unity Catalog type string for a field (e.g. STRING, STRUCT<...>, ARRAY<...>)."""
@@ -57,16 +88,19 @@ def _field_to_uc_type_text(field: FieldDescriptor, depth: int = 0) -> str:
 def _descriptor_to_columns_impl(descriptor: Descriptor) -> list[ColumnInfo]:
     """Convert a message Descriptor to a list of ColumnInfo (UC column definitions)."""
     result: list[ColumnInfo] = []
-    for field in descriptor.fields:
+    for position, field in enumerate(descriptor.fields, start=1):
         name = field.name
         if field.label == FieldDescriptor.LABEL_REPEATED:
             if field.type == FieldDescriptor.TYPE_MESSAGE:
                 elem_type = _field_to_uc_type_text(field)
+                elem_json = _field_to_type_json(field)
                 result.append(
                     ColumnInfo(
                         name=name,
                         type_name=ColumnTypeName.ARRAY,
                         type_text=f"ARRAY<{elem_type}>",
+                        type_json=f'{{"type": "array", "elementType": {elem_json}, "containsNull": true}}',
+                        position=position,
                     )
                 )
             else:
@@ -78,31 +112,51 @@ def _descriptor_to_columns_impl(descriptor: Descriptor) -> list[ColumnInfo]:
                     scalar = ColumnTypeName.INT
                 if scalar is None:
                     scalar = ColumnTypeName.STRING
+                scalar_json = _SCALAR_TYPE_JSON.get(scalar, '{"type": "string"}')
                 result.append(
                     ColumnInfo(
                         name=name,
                         type_name=ColumnTypeName.ARRAY,
                         type_text=f"ARRAY<{scalar.name}>",
+                        type_json=f'{{"type": "array", "elementType": {scalar_json}, "containsNull": true}}',
+                        position=position,
                     )
                 )
         elif field.type == FieldDescriptor.TYPE_MESSAGE:
             type_text = _field_to_uc_type_text(field)
+            type_json = _field_to_type_json(field)
             result.append(
                 ColumnInfo(
                     name=name,
                     type_name=ColumnTypeName.STRUCT,
                     type_text=type_text,
+                    type_json=type_json,
+                    position=position,
                 )
             )
         elif field.type == FieldDescriptor.TYPE_ENUM:
             result.append(
-                ColumnInfo(name=name, type_name=ColumnTypeName.INT)
+                ColumnInfo(
+                    name=name,
+                    type_name=ColumnTypeName.INT,
+                    type_text="INT",
+                    type_json=_SCALAR_TYPE_JSON[ColumnTypeName.INT],
+                    position=position,
+                )
             )
         else:
             type_name = _PROTO_SCALAR_TO_UC.get(field.type)
             if type_name is None:
                 type_name = ColumnTypeName.STRING
-            result.append(ColumnInfo(name=name, type_name=type_name))
+            result.append(
+                ColumnInfo(
+                    name=name,
+                    type_name=type_name,
+                    type_text=type_name.name,
+                    type_json=_SCALAR_TYPE_JSON.get(type_name, '{"type": "string"}'),
+                    position=position,
+                )
+            )
     return result
 
 
@@ -173,17 +227,17 @@ class TableUtils:
         """Create a table in the metastore using the WorkspaceClient.
 
         Uses the same credentials as the workspace client. Defaults create a
-        managed Delta table; when storage_location is omitted for MANAGED tables,
-        the location is derived from the schema's storage root so you don't pass
-        a storage path to the workspace directly.
+        managed Delta table. When storage_location is omitted (None), the backend
+        manages the backing storage for managed tables. Pass storage_location only
+        when you need to set it explicitly (e.g. for EXTERNAL tables).
 
         Args:
             workspace_client: Authenticated Databricks WorkspaceClient.
             catalog: Unity Catalog catalog name.
             schema: Schema name within the catalog.
             table: Table name within the schema.
-            storage_location: Optional storage root URL. For MANAGED (default),
-                if omitted, derived from the schema's storage_root. Required for EXTERNAL.
+            storage_location: Optional storage root URL. If None, not passed (managed tables
+                use backend-managed storage). Required for EXTERNAL tables—pass explicitly.
             table_type: TableType (default MANAGED).
             data_source_format: DataSourceFormat (default DELTA).
             columns: Optional list of ColumnInfo for the table schema.
@@ -192,30 +246,19 @@ class TableUtils:
         Returns:
             TableInfo for the created table.
         """
-        if storage_location is None:
-            if table_type == TableType.MANAGED:
-                schema_full_name = f"{catalog}.{schema}"
-                schema_info = workspace_client.schemas.get(full_name=schema_full_name)
-                root = getattr(schema_info, "storage_root", None) or getattr(
-                    schema_info, "storage_location", None
-                )
-                if not root:
-                    raise ValueError(
-                        f"Schema {schema_full_name} has no storage_root; "
-                        "set storage_location explicitly or configure the schema with a managed location."
-                    )
-                storage_location = f"{root.rstrip('/')}/{table}"
-            else:
-                raise ValueError(
-                    "storage_location is required for non-managed (e.g. EXTERNAL) tables."
-                )
+        if storage_location is None and table_type != TableType.MANAGED:
+            raise ValueError(
+                "storage_location is required for non-managed (e.g. EXTERNAL) tables."
+            )
+        # Only pass storage_location when provided; managed tables use backend-managed storage when None.
+        storage = storage_location if storage_location is not None else ""
         return workspace_client.tables.create(
             name=table,
             catalog_name=catalog,
             schema_name=schema,
             table_type=table_type,
             data_source_format=data_source_format,
-            storage_location=storage_location,
+            storage_location=storage,
             columns=columns,
             properties=properties,
         )

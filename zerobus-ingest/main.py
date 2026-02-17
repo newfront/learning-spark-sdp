@@ -19,5 +19,8 @@ if __name__ == "__main__":
         generate=args.generate,
         publish=args.publish,
         count=args.count,
-        config=config if args.publish else None,
+        config=config if (args.publish or args.create_table) else None,
+        create_table=args.create_table,
+        descriptor_path=args.descriptor_path,
+        message_name=args.message_name,
     )

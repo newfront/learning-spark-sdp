@@ -179,6 +179,49 @@ To create an **external** Delta table with your own path, pass `storage_location
 
 ---
 
+## VolumeUtils
+
+`VolumeUtils` helps upload local files to [Unity Catalog volumes](https://docs.databricks.com/data-governance/unity-catalog/volumes.html) using the Databricks SDK `WorkspaceClient`. You need `USE CATALOG`, `USE SCHEMA`, and `WRITE VOLUME` on the target volume.
+
+### Upload a file to a UC volume
+
+- **`upload_file(workspace_client, file, destination, *, overwrite=True) -> bool`** — Uploads a local file to a Unity Catalog volume path. `destination` is the full volume path (e.g. a directory). If it doesn’t end with the file’s name, the file is written to `destination/<file.name>`.
+
+Volume paths use the form:
+
+```
+/Volumes/<catalog_name>/<schema_name>/<volume_name>/<optional_path>
+```
+
+**Example: upload descriptor.bin to a volume**
+
+```python
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+from databricks.sdk import WorkspaceClient
+
+from zerobus_ingest.config import Config
+from zerobus_ingest.utils import VolumeUtils
+
+load_dotenv()
+config = Config.databricks()
+client = WorkspaceClient(host=config["host"], token=config["token"])
+
+# Upload the generated descriptor to a volume (e.g. for Spark or other consumers)
+VolumeUtils.upload_file(
+    client,
+    Path("gen/python/orders/v1/descriptor.bin"),
+    "/Volumes/scotts_playground/demos/apps/schemas/protos/orders/v1/",
+)
+# File is at: .../v1/descriptor.bin
+```
+
+You can pass a full file path as `destination` (including the filename) to control the name in the volume; otherwise the local filename is used under the given directory.
+
+---
+
 ## ZerobusWriter
 
 `ZerobusWriter` wraps the Zerobus ingest SDK to write protobuf (or dict) records to a Zerobus stream. The stream is created lazily on the first `write()`; when the record is a protobuf message, the message’s `DESCRIPTOR` is used for `TableProperties` so the stream schema matches the message type.
