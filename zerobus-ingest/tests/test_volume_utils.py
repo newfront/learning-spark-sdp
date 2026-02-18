@@ -1,4 +1,7 @@
-"""Tests for VolumeUtils. upload_file test is end-to-end and requires Databricks credentials."""
+"""
+Tests for VolumeUtils.
+upload_file test is end-to-end and requires Databricks credentials.
+"""
 
 from pathlib import Path
 
@@ -16,7 +19,9 @@ def _has_databricks_env() -> bool:
     """True if we have minimal env to create a WorkspaceClient and call the API."""
     import os
 
-    return bool(os.environ.get("DATABRICKS_HOST") and os.environ.get("DATABRICKS_TOKEN"))
+    return bool(
+        os.environ.get("DATABRICKS_HOST") and os.environ.get("DATABRICKS_TOKEN")
+    )
 
 
 @pytest.mark.skipif(
@@ -33,14 +38,15 @@ def test_upload_descriptor_bin_to_volume():
     Requires .env (or env) with DATABRICKS_HOST, DATABRICKS_TOKEN, and WRITE VOLUME
     on the target volume. Run with:
 
-        uv run pytest tests/test_volume_utils.py::test_upload_descriptor_bin_to_volume -v -s
+        uv run pytest \
+          tests/test_volume_utils.py::test_upload_descriptor_bin_to_volume \
+          -v -s 
 
     File ends up at:
         /Volumes/scotts_playground/demos/apps/schemas/protos/orders/v1/descriptor.bin
     """
-    from dotenv import load_dotenv
-
     from databricks.sdk import WorkspaceClient
+    from dotenv import load_dotenv
 
     from zerobus_ingest.config import Config
 

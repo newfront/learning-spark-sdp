@@ -20,8 +20,9 @@ test:
 # Generate a serialized FileDescriptorSet for use in the Apache Spark application
 # (read/ingest orders). Output is Protobuf binary format; --exclude-source-info
 # keeps the file smaller. See: https://buf.build/docs/reference/descriptors/
+# add --exclude-source-info to keep the file smaller if you don't need the source details
 descriptor:
-	buf build -o gen/python/orders/v1/descriptor.bin --exclude-source-info
+	buf build -o gen/python/orders/v1/descriptor.bin 
 
 # Bump the project version in pyproject.toml.
 # Usage: make release [bump=minor]

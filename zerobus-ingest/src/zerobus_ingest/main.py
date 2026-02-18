@@ -4,9 +4,9 @@ import argparse
 from pathlib import Path
 from typing import Any
 
+from databricks.sdk import WorkspaceClient
 from google.protobuf import descriptor_pb2
 from google.protobuf.descriptor_pool import DescriptorPool
-from databricks.sdk import WorkspaceClient
 from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions
 
 from zerobus_ingest.datagen import Orders
@@ -66,7 +66,8 @@ def parse_args():
     parser.add_argument(
         "--create-table",
         action="store_true",
-        help="If the table does not exist, create it using a binary protobuf descriptor.",
+        help="If the table does not exist, create it using a binary "
+        + "protobuf descriptor.",
     )
     parser.add_argument(
         "--descriptor-path",
@@ -80,7 +81,8 @@ def parse_args():
         type=str,
         default=None,
         metavar="NAME",
-        help="Full protobuf message name, e.g. orders.v1.Order (required with --create-table).",
+        help="Full protobuf message name, e.g. orders.v1.Order (required with "
+        + "--create-table).",
     )
     return parser.parse_args()
 
@@ -101,7 +103,8 @@ def main(
             raise ValueError("config is required when --create-table is set")
         if not descriptor_path or not message_name:
             raise ValueError(
-                "--descriptor-path and --message-name are required when --create-table is set"
+                "--descriptor-path and --message-name are required when "
+                + " --create-table is set"
             )
         catalog, schema, table = config["catalog"], config["schema"], config["table"]
         if TableUtils.table_exists(workspace_client, catalog, schema, table):
@@ -109,7 +112,9 @@ def main(
             return
         descriptor = _load_descriptor_from_binary(descriptor_path, message_name)
         columns = TableUtils.descriptor_to_columns(descriptor)
-        TableUtils.create_table(workspace_client, catalog, schema, table, columns=columns)
+        TableUtils.create_table(
+            workspace_client, catalog, schema, table, columns=columns
+        )
         print(f"Created table {catalog}.{schema}.{table}")
 
     if generate:
@@ -132,7 +137,9 @@ def main(
             )
         orders = Orders.generate_orders(count, seed=42)
         stream_options = StreamConfigurationOptions(record_type=RecordType.PROTO)
-        with ZerobusWriter.from_config(config).with_stream_options(stream_options) as writer:
+        with ZerobusWriter.from_config(config).with_stream_options(
+            stream_options
+        ) as writer:
             for order in orders:
                 # we can use wait_for_ack()
                 ack = writer.write(order)
