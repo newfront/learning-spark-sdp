@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "bufbuild-protovalidate-protocolbuffers-python",
+    "bufbuild-protovalidate-protocolbuffers-python==33.5.0.1.20260209202127+80ab13bee0bf",
     "databricks-sdk>=0.88.0",
     "databricks-connect>=18.0.0",
     "databricks-zerobus-ingest-sdk>=0.2.0",
@@ -42,5 +42,17 @@ Repository = "https://github.com/newfront/learning-spark-sdp"
 Releases = "https://github.com/newfront/learning-spark-sdp/releases"
 
 [build-system]
-requires = ["uv_build>=0.9.8,<0.10.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src", "gen/python"]
+exclude = ["*.__pycache__", "orders.v1.__pycache__"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+"orders" = "gen/python/orders"
+
+# Include descriptor.bin and .pyi in the orders.v1 package (wheel + sdist)
+[tool.setuptools.package-data]
+"orders.v1" = ["*.bin", "*.pyi"]

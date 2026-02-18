@@ -1,6 +1,8 @@
 # zerobus-ingest
 
-Ingest application using the Databricks ZeroBus ingest SDK.
+Ingest application using the Databricks ZeroBus ingest SDK. 
+> Read more about it in the official docs: [Databricks Zerobus](https://docs.databricks.com/aws/en/ingestion/zerobus-ingest)
+> Current limitations [Zerobus Limitations](https://docs.databricks.com/aws/en/ingestion/zerobus-limits)
 
 ## Environment
 
@@ -38,6 +40,26 @@ UC_TABLE=
 - **DATABRICKS_CLIENT_ID** / **DATABRICKS_CLIENT_SECRET** — OAuth client credentials (if using OAuth).
 - **ZEROBUS_CLIENT_ID** / **ZEROBUS_CLIENT_SECRET** — Zerobus ingest client credentials (required for `ZerobusWriter` and `--publish`).
 - **UC_CATALOG**, **UC_SCHEMA**, **UC_TABLE** — Unity Catalog catalog, schema, and table for Zerobus ingestion target.
+
+## Installing from dist (sdist or wheel)
+
+The package depends on **bufbuild-protovalidate-protocolbuffers-python**, which is published on Buf’s index, not PyPI. The `extra-index-url` in `pyproject.toml` is only used when working inside this repo; it is not embedded in the sdist, so you must pass the extra index when installing from a built artifact.
+
+**Using uv (recommended):**
+
+```bash
+uv pip install --extra-index-url https://buf.build/gen/python dist/zerobus_ingest-0.1.0.tar.gz
+# or from a wheel:
+uv pip install --extra-index-url https://buf.build/gen/python dist/zerobus_ingest-0.1.0-py3-none-any.whl
+```
+
+**Using pip:**
+
+```bash
+pip install --extra-index-url https://buf.build/gen/python dist/zerobus_ingest-0.1.0.tar.gz
+```
+
+From the project root you can run **`make install-dist`** to install the built wheel/sdist with the correct extra index (uses the first `dist/*.whl` or `dist/*.tar.gz` found).
 
 ## Run
 
@@ -77,6 +99,34 @@ uv run main.py --env prod --publish --count 50
 | `--generate` | off   | Generate sample orders via `datagen.Orders.generate_orders()` and print to stdout. |
 | `--publish` | off    | Generate orders and publish each to Zerobus via `ZerobusWriter`. |
 | `--count`   | 100    | Number of records to generate when `--generate` or `--publish` is set. |
+
+---
+
+## Releasing artifacts
+
+To release the application (build, sanity-check, test, package, bump version, and publish), run the steps in order. Each step is a Makefile target.
+
+| Step        | Command            | What it does |
+|------------|--------------------|--------------|
+| **build**  | `make build`       | Lint and format protos; run buf generate; format and lint Python (ruff). |
+| **generate** | `make generate` | Depends on build; runs the app in generate mode (100 orders) as a sanity check. |
+| **test**   | `make test`       | Runs pytest. |
+| **package**| `make package`    | Builds wheel and sdist into `dist/` (`uv build`). |
+| **release**| `make release [bump=minor]` | Bumps the version in `pyproject.toml`. Default is `minor`; use `bump=patch`, `bump=major`, etc. |
+| **publish**| `make publish`    | Depends on package; uploads `dist/*` to PyPI (or `UV_PUBLISH_INDEX`). Requires `UV_PUBLISH_TOKEN` (or username/password). |
+
+**Typical release flow**
+
+```bash
+make build
+make generate
+make test
+make package
+make release              # or: make release bump=patch
+make publish              # or: UV_PUBLISH_TOKEN=pypi-xxx make publish
+```
+
+You can run the first four steps without credentials. For `make publish`, set a PyPI API token (e.g. `export UV_PUBLISH_TOKEN=pypi-...`) or use `uv publish --dry-run` to test without uploading.
 
 ---
 

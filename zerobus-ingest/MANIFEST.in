@@ -1,0 +1,7 @@
+# Include generated Python and descriptor for orders
+recursive-include gen *
+# Exclude bytecode/cache from sdist
+global-exclude __pycache__
+global-exclude *.py[cod]
+# Include proto sources
+recursive-include protos *

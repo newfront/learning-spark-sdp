@@ -987,8 +987,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "bufbuild-protovalidate-protocolbuffers-python" },
-    { name = "databricks-connect", specifier = ">=18.0" },
+    { name = "bufbuild-protovalidate-protocolbuffers-python", specifier = "==33.5.0.1.20260209202127+80ab13bee0bf" },
+    { name = "databricks-connect", specifier = ">=18.0.0" },
     { name = "databricks-sdk", specifier = ">=0.88.0" },
     { name = "databricks-zerobus-ingest-sdk", specifier = ">=0.2.0" },
     { name = "delta-spark", specifier = "==4.0.1" },
