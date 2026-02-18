@@ -8,13 +8,15 @@ from pathlib import Path
 
 import protovalidate
 
-# Make gen/python importable (orders.v1.orders_pb2); project root is two levels up.
-_root = Path(__file__).resolve().parent.parent.parent.parent
-_gen = _root / "gen" / "python"
-if str(_gen) not in sys.path:
-    sys.path.insert(0, str(_gen))
-
-from orders.v1 import orders_pb2  # noqa: E402
+# Use installed orders package when available; otherwise run from source (gen/python).
+try:
+    from orders.v1 import orders_pb2  # noqa: E402
+except ImportError:
+    _root = Path(__file__).resolve().parent.parent.parent.parent
+    _gen = _root / "gen" / "python"
+    if str(_gen) not in sys.path:
+        sys.path.insert(0, str(_gen))
+    from orders.v1 import orders_pb2  # noqa: E402
 
 OrderStatus = orders_pb2.OrderStatus
 PaymentMethod = orders_pb2.PaymentMethod
@@ -91,6 +93,11 @@ class Orders:
         ("Seattle", "WA", "98101"),
         ("Portland", "OR", "97201"),
     ]
+
+    @staticmethod
+    def generate_binary_orders(count: int = 1, seed: int | None = None) -> list[bytes]:
+        orders = Orders.generate_orders(count, seed)
+        return [order.SerializeToString() for order in orders]
 
     @staticmethod
     def generate_orders(count: int = 1, seed: int | None = None) -> list[Order]:

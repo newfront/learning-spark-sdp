@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import logging
 from google.protobuf.descriptor import Descriptor
 from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions, TableProperties
 from zerobus.sdk.sync import ZerobusSdk, ZerobusStream
@@ -16,7 +17,9 @@ class ZerobusWriter:
         self,
         *,
         host: str,
-        unity_catalog_url: str,
+        workplace_url: str,
+        workspace_id: str,
+        region: str,
         client_id: str,
         client_secret: str,
         catalog: str,
@@ -25,7 +28,9 @@ class ZerobusWriter:
         stream_options: StreamConfigurationOptions | None = None,
     ) -> None:
         self._host = host
-        self._unity_catalog_url = unity_catalog_url
+        self._workplace_url = workplace_url
+        self._workspace_id = workspace_id
+        self._region = region
         self._client_id = client_id
         self._client_secret = client_secret
         self._table_name = f"{catalog}.{schema}.{table}"
@@ -39,7 +44,9 @@ class ZerobusWriter:
         """Build a ZerobusWriter from a config dict (e.g. Config.databricks())."""
         return cls(
             host=config["host"],
-            unity_catalog_url=config["workspace_url"],
+            workplace_url=config["workspace_url"],
+            workspace_id=config["workspace_id"],
+            region=config["region"],
             client_id=config["zerobus_client_id"],
             client_secret=config["zerobus_client_secret"],
             catalog=config["catalog"],
@@ -54,6 +61,18 @@ class ZerobusWriter:
         self._stream_options = options
         return self
 
+    def generate_sdk(self) -> ZerobusSdk:
+        """Build and return ZerobusSdk from config; log server_endpoint and unity_catalog_url."""
+        server_endpoint = f"{self._workspace_id}.zerobus.{self._region}.cloud.databricks.com"
+        unity_catalog_url = self._workplace_url
+        logging.info("Server endpoint: %s", server_endpoint)
+        logging.info("Unity catalog URL: %s", unity_catalog_url)
+        self._sdk = ZerobusSdk(
+            host=server_endpoint,
+            unity_catalog_url=unity_catalog_url,
+        )
+        return self._sdk
+
     @staticmethod
     def get_descriptor(record: Any) -> Descriptor | None:
         """Return the DESCRIPTOR for a protobuf message, or None if the record has none.
@@ -66,12 +85,9 @@ class ZerobusWriter:
         if self._stream is not None:
             return self._stream
         if self._sdk is None:
-            self._sdk = ZerobusSdk(
-                host=self._host,
-                unity_catalog_url=self._unity_catalog_url,
-            )
+            self.generate_sdk()
         if descriptor is not None:
-            table_properties = TableProperties(self._table_name, descriptor)
+            table_properties = TableProperties(self._table_name, descriptor_proto=descriptor)
         else:
             table_properties = TableProperties(table_name=self._table_name)
         self._stream = self._sdk.create_stream(
