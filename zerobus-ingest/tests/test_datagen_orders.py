@@ -37,3 +37,14 @@ def test_generate_orders_message_has_required_fields():
     assert len(o.line_items) >= 1
     assert o.total.currency_code == "USD"
     assert o.total.units >= 0
+
+
+def test_generate_orders_status_and_payment_method_are_strings():
+    """status and payment_method are string values (enum names), not enum ints."""
+    orders = Orders.generate_orders(3, seed=99)
+    for o in orders:
+        assert isinstance(o.status, str), "status must be a string"
+        assert isinstance(o.payment_method, str), "payment_method must be a string"
+    # Datagen uses ORDER_STATUS_CONFIRMED and PAYMENT_METHOD_CARD
+    assert orders[0].status == "ORDER_STATUS_CONFIRMED"
+    assert orders[0].payment_method == "PAYMENT_METHOD_CARD"

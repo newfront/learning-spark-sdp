@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from google.protobuf.descriptor import Descriptor, FieldDescriptor
-
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.catalog import (
     ColumnInfo,
@@ -12,8 +10,10 @@ from databricks.sdk.service.catalog import (
     TableInfo,
     TableType,
 )
+from google.protobuf.descriptor import Descriptor, FieldDescriptor
 
-# Proto type to Unity Catalog scalar (reverse of zerobus generate_proto.py type mappings)
+# Proto type to Unity Catalog scalar
+# (reverse of zerobus generate_proto.py type mappings)
 _PROTO_SCALAR_TO_UC: dict[int, ColumnTypeName] = {
     FieldDescriptor.TYPE_INT32: ColumnTypeName.INT,
     FieldDescriptor.TYPE_SINT32: ColumnTypeName.INT,
@@ -33,7 +33,8 @@ _PROTO_SCALAR_TO_UC: dict[int, ColumnTypeName] = {
 }
 # TYPE_ENUM -> INT (store enum as integer in Delta)
 
-# Spark DataType JSON for scalar ColumnTypeName (required by Create Table API).
+# Spark DataType JSON for scalar ColumnTypeName
+# (required by Create Table API).
 _SCALAR_TYPE_JSON: dict[ColumnTypeName, str] = {
     ColumnTypeName.STRING: '{"type": "string"}',
     ColumnTypeName.INT: '{"type": "integer"}',
@@ -55,7 +56,9 @@ def _field_to_type_json(field: FieldDescriptor, depth: int = 0) -> str:
         fields_json = []
         for i, f in enumerate(msg_desc.fields, start=1):
             fj = _field_to_type_json(f, depth + 1)
-            fields_json.append(f'{{"name": "{f.name}", "type": {fj}, "nullable": true}}')
+            fields_json.append(
+                f'{{"name": "{f.name}", "type": {fj}, "nullable": true}}'
+            )
         return '{"type": "struct", "fields": [' + ", ".join(fields_json) + "]}"
     if kind == FieldDescriptor.TYPE_ENUM:
         return '{"type": "integer"}'
@@ -66,7 +69,10 @@ def _field_to_type_json(field: FieldDescriptor, depth: int = 0) -> str:
 
 
 def _field_to_uc_type_text(field: FieldDescriptor, depth: int = 0) -> str:
-    """Return Unity Catalog type string for a field (e.g. STRING, STRUCT<...>, ARRAY<...>)."""
+    """
+    Return Unity Catalog type string for a field
+    (e.g. STRING, STRUCT<...>, ARRAY<...>).
+    """
     if depth > 50:
         raise ValueError("Proto nesting too deep")
     kind = field.type
@@ -86,7 +92,10 @@ def _field_to_uc_type_text(field: FieldDescriptor, depth: int = 0) -> str:
 
 
 def _descriptor_to_columns_impl(descriptor: Descriptor) -> list[ColumnInfo]:
-    """Convert a message Descriptor to a list of ColumnInfo (UC column definitions)."""
+    """
+    Convert a message Descriptor to a list of ColumnInfo
+    (UC column definitions).
+    """
     result: list[ColumnInfo] = []
     for position, field in enumerate(descriptor.fields, start=1):
         name = field.name
@@ -99,14 +108,16 @@ def _descriptor_to_columns_impl(descriptor: Descriptor) -> list[ColumnInfo]:
                         name=name,
                         type_name=ColumnTypeName.ARRAY,
                         type_text=f"ARRAY<{elem_type}>",
-                        type_json=f'{{"type": "array", "elementType": {elem_json}, "containsNull": true}}',
+                        type_json=f'{{"type": "array", "elementType": {elem_json},"containsNull": true}}',  # noqa: E501
                         position=position,
                     )
                 )
             else:
                 scalar = _PROTO_SCALAR_TO_UC.get(
                     field.type,
-                    ColumnTypeName.STRING if field.type == FieldDescriptor.TYPE_ENUM else None,
+                    ColumnTypeName.STRING
+                    if field.type == FieldDescriptor.TYPE_ENUM
+                    else None,
                 )
                 if field.type == FieldDescriptor.TYPE_ENUM:
                     scalar = ColumnTypeName.INT
@@ -118,7 +129,7 @@ def _descriptor_to_columns_impl(descriptor: Descriptor) -> list[ColumnInfo]:
                         name=name,
                         type_name=ColumnTypeName.ARRAY,
                         type_text=f"ARRAY<{scalar.name}>",
-                        type_json=f'{{"type": "array", "elementType": {scalar_json}, "containsNull": true}}',
+                        type_json=f'{{"type": "array", "elementType": {scalar_json}, "containsNull": true}}',  # noqa: E501
                         position=position,
                     )
                 )
@@ -170,7 +181,10 @@ class TableUtils:
         schema: str,
         table: str,
     ) -> bool:
-        """Return True if a table exists in the metastore for the given catalog, schema, and table name."""
+        """
+        Return True if a table exists in the metastore for
+        the given catalog, schema, and table name.
+        """
         full_name = f"{catalog}.{schema}.{table}"
         response = workspace_client.tables.exists(full_name=full_name)
         return bool(getattr(response, "table_exists", False))
@@ -182,7 +196,8 @@ class TableUtils:
         Uses the inverse of the [zerobus generate_proto type mappings]
         (https://github.com/databricks/zerobus-sdk-py/blob/main/zerobus/tools/generate_proto.py):
         int32->INT, int64->LONG, string->STRING, float->FLOAT, double->DOUBLE,
-        bool->BOOLEAN, bytes->BINARY, enum->INT, message->STRUCT<...>, repeated->ARRAY<...>.
+        bool->BOOLEAN, bytes->BINARY, enum->INT, message->STRUCT<...>,
+        repeated->ARRAY<...>.
 
         Args:
             descriptor: A message Descriptor (e.g. Order.DESCRIPTOR from orders_pb2).
@@ -207,7 +222,11 @@ class TableUtils:
         name_width = max(len(c.name) for c in columns)
         lines = []
         for c in columns:
-            type_str = c.type_text if c.type_text else (c.type_name.name if c.type_name else "?")
+            type_str = (
+                c.type_text
+                if c.type_text
+                else (c.type_name.name if c.type_name else "?")
+            )
             lines.append(f"  {c.name:<{name_width}}  {type_str}")
         return "\n".join(lines)
 
@@ -236,8 +255,10 @@ class TableUtils:
             catalog: Unity Catalog catalog name.
             schema: Schema name within the catalog.
             table: Table name within the schema.
-            storage_location: Optional storage root URL. If None, not passed (managed tables
-                use backend-managed storage). Required for EXTERNAL tables—pass explicitly.
+            storage_location: Optional storage root URL. If None, not passed
+            (managed tables
+                use backend-managed storage). Required for EXTERNAL
+                tables—pass explicitly.
             table_type: TableType (default MANAGED).
             data_source_format: DataSourceFormat (default DELTA).
             columns: Optional list of ColumnInfo for the table schema.
@@ -248,9 +269,11 @@ class TableUtils:
         """
         if storage_location is None and table_type != TableType.MANAGED:
             raise ValueError(
-                "storage_location is required for non-managed (e.g. EXTERNAL) tables."
+                "storage_location is required for non-managed "
+                + "(e.g. EXTERNAL) tables."
             )
-        # Only pass storage_location when provided; managed tables use backend-managed storage when None.
+        # Only pass storage_location when provided; managed tables
+        # use backend-managed storage when None.
         storage = storage_location if storage_location is not None else ""
         return workspace_client.tables.create(
             name=table,

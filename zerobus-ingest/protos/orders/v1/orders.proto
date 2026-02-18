@@ -6,65 +6,78 @@ import "buf/validate/validate.proto";
 
 option go_package = "buf.build/dbx-demos/orders/protobuf/orders/v1;ordersv1";
 
-// OrderStatus represents the lifecycle state of an order.
-enum OrderStatus {
-  ORDER_STATUS_UNSPECIFIED = 0;
-  ORDER_STATUS_PENDING = 1;
-  ORDER_STATUS_CONFIRMED = 2;
-  ORDER_STATUS_PROCESSING = 3;
-  ORDER_STATUS_SHIPPED = 4;
-  ORDER_STATUS_DELIVERED = 5;
-  ORDER_STATUS_CANCELLED = 6;
-  ORDER_STATUS_REFUNDED = 7;
-}
-
-// PaymentMethod indicates how the order was paid.
-enum PaymentMethod {
-  PAYMENT_METHOD_UNSPECIFIED = 0;
-  PAYMENT_METHOD_CARD = 1;
-  PAYMENT_METHOD_APPLEPAY = 2;
-  PAYMENT_METHOD_BANK_TRANSFER = 3;
-  PAYMENT_METHOD_OTHER = 4;
-}
-
-// Money represents a decimal amount in a given currency.
-message Money {
-  string currency_code = 1 [(buf.validate.field).string.len = 3]; // e.g. "USD", "EUR" (ISO 4217)
-  int64 units = 2 [(buf.validate.field).int64.gte = 0]; // whole units
-  int32 nanos = 3 [(buf.validate.field).int32 = {
-    gte: -999999999
-    lte: 999999999
-  }]; // fractional part (e.g. cents)
-}
-
-// Address is a shipping or billing address.
-message Address {
-  string line_1 = 1 [(buf.validate.field).string.min_len = 1];
-  string line_2 = 2;
-  string city = 3 [(buf.validate.field).string.min_len = 1];
-  string state_or_province = 4;
-  string postal_code = 5 [(buf.validate.field).string.min_len = 1];
-  string country_code = 6 [(buf.validate.field).string.len = 2]; // ISO 3166-1 alpha-2
-}
-
-// OrderLineItem is a single line on an order (one product, quantity, and price).
-message OrderLineItem {
-  string product_id = 1 [(buf.validate.field).string.min_len = 1];
-  string sku = 2 [(buf.validate.field).string.min_len = 1];
-  string name = 3 [(buf.validate.field).string.min_len = 1];
-  int32 quantity = 4 [(buf.validate.field).int32.gt = 0];
-  Money unit_price = 5;
-  Money total_price = 6;
-}
-
-// Order represents a typical ecommerce order.
+// Order represents a typical ecommerce order. All nested types are defined
+// inside Order so the descriptor is self-contained for Zerobus/stream ingest.
 message Order {
+  // OrderStatus represents the lifecycle state of an order.
+  enum OrderStatus {
+    ORDER_STATUS_UNSPECIFIED = 0;
+    ORDER_STATUS_PENDING = 1;
+    ORDER_STATUS_CONFIRMED = 2;
+    ORDER_STATUS_PROCESSING = 3;
+    ORDER_STATUS_SHIPPED = 4;
+    ORDER_STATUS_DELIVERED = 5;
+    ORDER_STATUS_CANCELLED = 6;
+    ORDER_STATUS_REFUNDED = 7;
+  }
+
+  // PaymentMethod indicates how the order was paid.
+  enum PaymentMethod {
+    PAYMENT_METHOD_UNSPECIFIED = 0;
+    PAYMENT_METHOD_CARD = 1;
+    PAYMENT_METHOD_APPLEPAY = 2;
+    PAYMENT_METHOD_BANK_TRANSFER = 3;
+    PAYMENT_METHOD_OTHER = 4;
+  }
+
+  // Money represents a decimal amount in a given currency.
+  message Money {
+    string currency_code = 1 [(buf.validate.field).string.len = 3]; // e.g. "USD", "EUR" (ISO 4217)
+    int64 units = 2 [(buf.validate.field).int64.gte = 0]; // whole units
+    int32 nanos = 3 [(buf.validate.field).int32 = {
+      gte: -999999999
+      lte: 999999999
+    }]; // fractional part (e.g. cents)
+  }
+
+  // Address is a shipping or billing address.
+  message Address {
+    string line_1 = 1 [(buf.validate.field).string.min_len = 1];
+    string line_2 = 2;
+    string city = 3 [(buf.validate.field).string.min_len = 1];
+    string state_or_province = 4;
+    string postal_code = 5 [(buf.validate.field).string.min_len = 1];
+    string country_code = 6 [(buf.validate.field).string.len = 2]; // ISO 3166-1 alpha-2
+  }
+
+  // OrderLineItem is a single line on an order (one product, quantity, and price).
+  message OrderLineItem {
+    string product_id = 1 [(buf.validate.field).string.min_len = 1];
+    string sku = 2 [(buf.validate.field).string.min_len = 1];
+    string name = 3 [(buf.validate.field).string.min_len = 1];
+    int32 quantity = 4 [(buf.validate.field).int32.gt = 0];
+    Money unit_price = 5;
+    Money total_price = 6;
+  }
+
   string order_id = 1 [
     (buf.validate.field).required = true,
     (buf.validate.field).string.uuid = true
   ];
   string customer_id = 2 [(buf.validate.field).string.min_len = 1];
-  OrderStatus status = 3 [(buf.validate.field).enum.defined_only = true];
+  // String (not enum) for Databricks; validated against allowed values via string.in
+  string status = 3 [(buf.validate.field).string = {
+    in: [
+      "ORDER_STATUS_UNSPECIFIED",
+      "ORDER_STATUS_PENDING",
+      "ORDER_STATUS_CONFIRMED",
+      "ORDER_STATUS_PROCESSING",
+      "ORDER_STATUS_SHIPPED",
+      "ORDER_STATUS_DELIVERED",
+      "ORDER_STATUS_CANCELLED",
+      "ORDER_STATUS_REFUNDED"
+    ]
+  }];
 
   repeated OrderLineItem line_items = 4 [(buf.validate.field).repeated.min_items = 1];
   Money subtotal = 5;
@@ -75,7 +88,16 @@ message Order {
   Address shipping_address = 9;
   Address billing_address = 10;
 
-  PaymentMethod payment_method = 11 [(buf.validate.field).enum.defined_only = true];
+  // String (not enum) for Databricks; validated against allowed values via string.in
+  string payment_method = 11 [(buf.validate.field).string = {
+    in: [
+      "PAYMENT_METHOD_UNSPECIFIED",
+      "PAYMENT_METHOD_CARD",
+      "PAYMENT_METHOD_APPLEPAY",
+      "PAYMENT_METHOD_BANK_TRANSFER",
+      "PAYMENT_METHOD_OTHER"
+    ]
+  }];
   string payment_id = 12 [(buf.validate.field).string.uuid = true]; // external payment reference (UUID v4)
 
   int64 created_at = 13; // Unix timestamp (seconds)

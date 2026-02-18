@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
-import logging
 from google.protobuf.descriptor import Descriptor
-from zerobus.sdk.shared.definitions import RecordType, StreamConfigurationOptions, TableProperties
+from zerobus.sdk.shared.definitions import (
+    StreamConfigurationOptions,
+    TableProperties,
+)
 from zerobus.sdk.sync import ZerobusSdk, ZerobusStream
 
 
@@ -54,16 +57,22 @@ class ZerobusWriter:
             table=config["table"],
         )
 
-    def with_stream_options(
-        self, options: StreamConfigurationOptions
-    ) -> ZerobusWriter:
-        """Overwrite stream options. Call before any write() so they apply when the stream is created."""
+    def with_stream_options(self, options: StreamConfigurationOptions) -> ZerobusWriter:
+        """
+        Overwrite stream options.
+        Call before any write() so they apply when the stream is created.
+        """
         self._stream_options = options
         return self
 
     def generate_sdk(self) -> ZerobusSdk:
-        """Build and return ZerobusSdk from config; log server_endpoint and unity_catalog_url."""
-        server_endpoint = f"{self._workspace_id}.zerobus.{self._region}.cloud.databricks.com"
+        """
+        Build and return ZerobusSdk from config;
+        log server_endpoint and unity_catalog_url.
+        """
+        server_endpoint = (
+            f"{self._workspace_id}.zerobus.{self._region}.cloud.databricks.com"
+        )
         unity_catalog_url = self._workplace_url
         logging.info("Server endpoint: %s", server_endpoint)
         logging.info("Unity catalog URL: %s", unity_catalog_url)
@@ -87,7 +96,9 @@ class ZerobusWriter:
         if self._sdk is None:
             self.generate_sdk()
         if descriptor is not None:
-            table_properties = TableProperties(self._table_name, descriptor_proto=descriptor)
+            table_properties = TableProperties(
+                self._table_name, descriptor_proto=descriptor
+            )
         else:
             table_properties = TableProperties(table_name=self._table_name)
         self._stream = self._sdk.create_stream(

@@ -18,11 +18,12 @@ except ImportError:
         sys.path.insert(0, str(_gen))
     from orders.v1 import orders_pb2  # noqa: E402
 
-OrderStatus = orders_pb2.OrderStatus
-PaymentMethod = orders_pb2.PaymentMethod
-Money = orders_pb2.Money
-Address = orders_pb2.Address
-OrderLineItem = orders_pb2.OrderLineItem
+# Nested types under Order (self-contained descriptor)
+OrderStatus = orders_pb2.Order.OrderStatus
+PaymentMethod = orders_pb2.Order.PaymentMethod
+Money = orders_pb2.Order.Money
+Address = orders_pb2.Order.Address
+OrderLineItem = orders_pb2.Order.OrderLineItem
 Order = orders_pb2.Order
 
 
@@ -117,7 +118,6 @@ class Orders:
                 qty = random.randint(1, 3)
                 item = _line_item(prod_id, sku, name, qty, unit_cents)
                 line_items.append(item)
-                # total_price is USD: units=dollars, nanos=fraction; recover cents
                 subtotal_cents += item.total_price.units * 100 + (
                     item.total_price.nanos // 10_000_000
                 )
@@ -131,7 +131,7 @@ class Orders:
             o = Order()
             o.order_id = order_id
             o.customer_id = customer_id
-            o.status = OrderStatus.ORDER_STATUS_CONFIRMED
+            o.status = OrderStatus.Name(OrderStatus.ORDER_STATUS_CONFIRMED)
             o.line_items.extend(line_items)
             o.subtotal.CopyFrom(
                 _money(
@@ -151,7 +151,7 @@ class Orders:
             )
             o.shipping_address.CopyFrom(_address(line_1, city, state, zip_code, "US"))
             o.billing_address.CopyFrom(_address(line_1, city, state, zip_code, "US"))
-            o.payment_method = PaymentMethod.PAYMENT_METHOD_CARD
+            o.payment_method = PaymentMethod.Name(PaymentMethod.PAYMENT_METHOD_CARD)
             o.payment_id = str(uuid.uuid4())
             o.created_at = now
             o.updated_at = now
