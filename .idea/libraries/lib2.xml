@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="lib2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/zerobus-ingest/.venv/lib/python3.12/site-packages/pyspark/python/lib/py4j-0.10.9.9-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/zerobus-ingest/.venv/lib/python3.12/site-packages/pyspark/python/lib/pyspark.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,55 @@
+<component name="libraryTable">
+  <library name="connect-repl2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-terminal-2.13.17_2.13-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/upack_2.13-4.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-interp-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/org.eclipse.xtend.lib-2.28.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/dependency-interface_2.13-0.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/class-path-util_2.13-0.1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/upickle-implicits_2.13-4.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/pprint_2.13-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/scalaparse_2.13-3.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/bsp4j-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/os-zip-0.11.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/javaparser-core-3.2.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/parsers_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-runtime-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/trees_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/upickle_2.13-4.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-interp-api-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/lenses_2.13-0.11.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/sourcecode_2.13-0.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-util-2.13.17_2.13-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/io_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-repl-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/scalameta_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ujson_2.13-4.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-compiler-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/typename_2.13-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/org.eclipse.lsp4j.generator-0.20.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/requests_2.13-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/spark-connect-client-jdbc_2.13-4.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/org.eclipse.lsp4j.jsonrpc-0.20.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/fansi_2.13-0.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/spark-connect-client-jvm_2.13-4.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/mainargs_2.13-0.7.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/semanticdb-shared_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-repl-api-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/common_2.13-4.13.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/interface-1.0.28.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/fastparse_2.13-3.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/os-lib_2.13-0.11.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/geny_2.13-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/org.eclipse.xtend.lib.macro-2.28.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/scalapb-runtime_2.13-0.11.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/ammonite-compiler-interface-2.13.17_2.13.17-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/upickle-core_2.13-4.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/org.eclipse.xtext.xbase.lib-2.28.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/jars/connect-repl/dependency_2.13-0.3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

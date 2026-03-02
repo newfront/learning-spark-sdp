@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/python/lib/py4j-0.10.9.9-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/sdp-playground/.venv/lib/python3.10/site-packages/pyspark/python/lib/pyspark.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
