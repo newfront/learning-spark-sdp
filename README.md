@@ -11,6 +11,12 @@ The `docker-compose.yaml` spins up a standalone Apache Spark 4.1.1 cluster with 
 ### Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- [just](https://just.systems/) — command runner (replaces `make`)
+
+  ```bash
+  brew install just
+  ```
+
 - [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#installation) — Python version manager
 
   ```bash
@@ -41,13 +47,17 @@ The `docker-compose.yaml` spins up a standalone Apache Spark 4.1.1 cluster with 
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
 
-### Start the cluster
+### Quick start (with just)
 
 ```bash
-docker compose up -d
+just cluster-up                                      # start the cluster
+just sdp-run sdp-playground/example_pipeline         # run the example pipeline
+just cluster-down                                    # tear it down
 ```
 
-### Web UIs
+Run `just` (or `just --list`) at any time to see all available recipes.
+
+### Cluster web UIs
 
 | Service | URL |
 |---|---|
@@ -56,24 +66,13 @@ docker compose up -d
 | Worker 2 | http://localhost:8082 |
 | Worker 3 | http://localhost:8083 |
 
-### Submit a job
+### Manual cluster commands
 
 ```bash
-spark-submit --master spark://localhost:7077 <your-job.py>
-```
-
-Or from within a container:
-
-```bash
-docker exec spark-master /opt/spark/bin/spark-submit \
-  --master spark://spark-master:7077 \
-  <your-job.py>
-```
-
-### Stop the cluster
-
-```bash
-docker compose down
+docker compose up -d      # start
+docker compose ps         # status
+docker compose logs -f    # tail logs
+docker compose down       # stop
 ```
 
 ## SDP Playground

@@ -12,6 +12,10 @@ services:
       - "15002:15002" # Spark Connect RPC Port
       - "8080:8080"   # Master Web UI
       - "7077:7077"   # Master port (workers/clients connect here)
+    volumes:
+      # SDP `storage:` root — must be RW from the driver (Connect server runs
+      # here) so it can write pipeline metadata and streaming checkpoints.
+      - ./pipeline-storage:/opt/spark/pipeline-storage:rw
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 10s
@@ -29,6 +33,10 @@ services:
       SPARK_WORKER_WEBUI_PORT: "8081"
     ports:
       - "8081:8081"   # Worker 1 Web UI
+    volumes:
+      # Workers write streaming checkpoints under the SDP `storage:` root;
+      # mount the same host dir at the same container path as the master.
+      - ./pipeline-storage:/opt/spark/pipeline-storage:rw
     depends_on:
       spark-master:
         condition: service_healthy
@@ -44,6 +52,8 @@ services:
       SPARK_WORKER_WEBUI_PORT: "8082"
     ports:
       - "8082:8082"   # Worker 2 Web UI
+    volumes:
+      - ./pipeline-storage:/opt/spark/pipeline-storage:rw
     depends_on:
       spark-master:
         condition: service_healthy
@@ -59,6 +69,8 @@ services:
       SPARK_WORKER_WEBUI_PORT: "8083"
     ports:
       - "8083:8083"   # Worker 3 Web UI
+    volumes:
+      - ./pipeline-storage:/opt/spark/pipeline-storage:rw
     depends_on:
       spark-master:
         condition: service_healthy

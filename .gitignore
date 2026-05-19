@@ -212,3 +212,18 @@ __marimo__/
 
 # claude 
 .claude/
+
+# Prevent uv.lock from being committed
+# this is done for the vpn bound pypi registry - my lock won't work for others
+uv.lock
+
+# SDP pipeline runtime artefacts.
+# `pipeline-storage/` is the host-side mount for the Spark cluster's SDP
+# `storage:` root (checkpoints, internal state). Keep the directory around via
+# `.gitkeep` so the docker-compose bind mount always has a target, but ignore
+# anything Spark writes into it.
+pipeline-storage/*
+!pipeline-storage/.gitkeep
+# `spark-warehouse/` is the default `spark.sql.warehouse.dir` for managed
+# tables in `spark_catalog`; never commit Parquet output.
+spark-warehouse/
