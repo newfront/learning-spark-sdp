@@ -1,0 +1,6 @@
+example_pipeline/pipeline-storage/
+example_pipeline/spark-warehouse/
+metastore_db/
+derby.log
+htmlcov/
+.coverage

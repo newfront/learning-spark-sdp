@@ -1,0 +1,37 @@
+---
+description: All code changes must be accompanied by tests. Never delete passing tests. Target ~80% coverage.
+alwaysApply: true
+---
+
+# Testing Discipline
+
+## Core Principles
+
+1. **Every change ships with tests.** No production code is considered complete without corresponding test coverage.
+2. **Never delete a passing test.** If a test fails after a code change, fix the code or update the test to match the new correct behavior — do not remove it.
+3. **Target ~80% coverage** across functions and conditional branches (if/else, match/case, exception handlers).
+
+## Python Testing Standards
+
+- Use **pytest** with **uv** for dependency and test execution. Prefer `@pytest.mark.parametrize` for functions with multiple input scenarios.
+- Place tests in a top-level `tests/` directory (e.g. `tests/test_foo.py`), mirroring the package layout where helpful.
+- Name test modules `test_<module>.py` and test functions `test_<behavior>_<scenario>` (e.g. `test_parse_lineage_empty_input`).
+- Test both the happy path **and** error/edge cases for every public function, class, and module API.
+- Add dev dependencies with uv when missing: `uv add --dev pytest pytest-cov`.
+
+## Coverage Workflow
+
+- From the project root (where `pyproject.toml` lives), run tests with coverage:
+
+  ```bash
+  uv run pytest --cov=<package_or_src> --cov-branch --cov-report=term-missing
+  ```
+
+- For an HTML report: `uv run pytest --cov=<package_or_src> --cov-branch --cov-report=html`, then open `htmlcov/index.html`.
+- Flag any public function below ~80% branch coverage and add tests before considering work complete.
+
+## What Not To Do
+
+- Do not write tests that assert on non-deterministic values (timestamps, random UUIDs) without controlling or mocking the input.
+- Do not skip flaky tests permanently — fix the root cause (shared Spark sessions, parallel test isolation, timeouts).
+- Do not delete or comment out tests to make a suite pass.

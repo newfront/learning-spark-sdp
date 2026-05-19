@@ -1,5 +1,8 @@
 # learning-spark-sdp
-This is an entire environment created to master the craft of Spark Declarative Pipelines.
+This is environment created to build up the mental muscle to master the craft of Spark Declarative Pipelines (SDP).
+
+> Note: This project represents my own journey from Apache Spark Structured Streaming (SS) to SDP. 
+> If you don't know this, I was so enamoured with SS that I wrote an entire book on the subject [Modern Data Engineering with Apache Spark](https://www.oreilly.com/library/view/modern-data-engineering/9781484274521/). It was written entirely in Scala. This project is written entirely in Python and Spark SQL, given the primatives for SDP are exactly that.
 
 ## Local Spark Cluster
 
@@ -72,3 +75,11 @@ docker exec spark-master /opt/spark/bin/spark-submit \
 ```bash
 docker compose down
 ```
+
+## SDP Playground
+
+The [`sdp-playground/`](./sdp-playground) directory is a `uv`-managed Python
+project for learning [Spark Declarative Pipelines](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html)
+on PySpark 4.1.1. It contains an example pipeline (Python + SQL materialized
+views) and pytest-based tests for the underlying transformation logic. See
+[`sdp-playground/README.md`](./sdp-playground/README.md) for usage details.
