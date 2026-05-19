@@ -1,0 +1,9 @@
+name: example_pipeline
+
+# SDP requires an absolute URI for storage (e.g. file://, s3a://, hdfs://).
+# Update this path if you clone the repo to a different location.
+storage: file:///Users/scott.haines/git/newfront/learning-spark-sdp/sdp-playground/example_pipeline/pipeline-storage
+
+libraries:
+  - glob:
+      include: transformations/**
