@@ -1,9 +1,14 @@
 name: example_pipeline
 
 # SDP requires an absolute URI for storage (e.g. file://, s3a://, hdfs://).
-# Update this path if you clone the repo to a different location.
-storage: file:///Users/scott.haines/git/newfront/learning-spark-sdp/sdp-playground/example_pipeline/pipeline-storage
+# This path is resolved on the Spark driver + workers, which is the
+# `./pipeline-storage` host directory mounted into every container by
+# `docker-compose.yaml` at `/opt/spark/pipeline-storage`.
+storage: file:///opt/spark/pipeline-storage
 
 libraries:
   - glob:
       include: transformations/**
+
+configuration:
+  spark.sql.shuffle.partitions: '16'
