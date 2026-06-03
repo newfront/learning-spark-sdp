@@ -16,7 +16,9 @@ def source_numbers() -> DataFrame:
     return SparkSession.active().range(20)
 
 
-@dp.materialized_view
+@dp.materialized_view(
+    spark_conf={}
+)
 def even_numbers() -> DataFrame:
     """Even integers from ``source_numbers``."""
     return filter_even(SparkSession.active().table("source_numbers"))
