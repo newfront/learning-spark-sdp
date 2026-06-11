@@ -5,6 +5,32 @@ in this repository. Read it before making any changes.
 
 ---
 
+## Agent rules and skills
+
+Project-specific guidance for agents lives under [`.agents/`](./.agents). Read
+the applicable files before working in the relevant area.
+
+### Rules — always apply
+
+These are non-negotiable working agreements. Follow them on every task.
+
+| Rule | What it covers |
+|---|---|
+| [`.agents/rules/branching-rule.mdc`](./.agents/rules/branching-rule.mdc) | Never commit to `main`; create a `feat/`-style branch before the first change. |
+| [`.agents/rules/testing-discipline.mdc`](./.agents/rules/testing-discipline.mdc) | Every change ships with tests; never delete passing tests; target ~80% branch coverage. |
+
+### Skills — apply when relevant
+
+Situational playbooks. Read the matching skill before doing that kind of work.
+
+| Skill | Use when |
+|---|---|
+| [`.agents/skills/sdp-authoring/SKILL.md`](./.agents/skills/sdp-authoring/SKILL.md) | Adding or editing an SDP dataset/flow (`@dp.table`, `@dp.materialized_view`, etc.) or debugging dataflow-graph errors. |
+| [`.agents/skills/proto-to-sdp/SKILL.md`](./.agents/skills/proto-to-sdp/SKILL.md) | Decoding protobuf clickstream data (`from_protobuf`, GA4 events, `commerce.v1.Amount`, exploding `items[]`) into Spark columns. |
+| [`.agents/skills/pyspark-testing/SKILL.md`](./.agents/skills/pyspark-testing/SKILL.md) | Writing or editing PySpark unit tests with pytest and the shared `SparkSession` fixture. |
+
+---
+
 ## What this project is
 
 `learning-spark-sdp` is a hands-on learning environment for
@@ -22,6 +48,9 @@ The primary sub-project is [`sdp-playground/`](./sdp-playground), a
 ```text
 learning-spark-sdp/
 ├── AGENTS.md                   ← you are here
+├── .agents/                    ← agent rules & skills (referenced from AGENTS.md)
+│   ├── rules/                  ← always-apply working agreements
+│   └── skills/                 ← situational playbooks (SDP, protobuf, testing)
 ├── Justfile                    ← all runnable commands (see below)
 ├── docker-compose.yaml         ← standalone Spark 4.1.1 cluster (1 master + 3 workers)
 ├── README.md                   ← human-facing setup guide
