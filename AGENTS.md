@@ -28,6 +28,7 @@ Situational playbooks. Read the matching skill before doing that kind of work.
 | [`.agents/skills/sdp-authoring/SKILL.md`](./.agents/skills/sdp-authoring/SKILL.md) | Adding or editing an SDP dataset/flow (`@dp.table`, `@dp.materialized_view`, etc.) or debugging dataflow-graph errors. |
 | [`.agents/skills/proto-to-sdp/SKILL.md`](./.agents/skills/proto-to-sdp/SKILL.md) | Decoding protobuf clickstream data (`from_protobuf`, GA4 events, `commerce.v1.Amount`, exploding `items[]`) into Spark columns. |
 | [`.agents/skills/pyspark-testing/SKILL.md`](./.agents/skills/pyspark-testing/SKILL.md) | Writing or editing PySpark unit tests with pytest and the shared `SparkSession` fixture. |
+| [`.agents/skills/delta-lake/SKILL.md`](./.agents/skills/delta-lake/SKILL.md) | Reading or writing Delta tables in PySpark — SparkSession config, MERGE/upsert, schema evolution, time travel, OPTIMIZE/VACUUM, partitioning, liquid clustering. |
 
 ---
 
@@ -50,7 +51,7 @@ learning-spark-sdp/
 ├── AGENTS.md                   ← you are here
 ├── .agents/                    ← agent rules & skills (referenced from AGENTS.md)
 │   ├── rules/                  ← always-apply working agreements
-│   └── skills/                 ← situational playbooks (SDP, protobuf, testing)
+│   └── skills/                 ← situational playbooks (SDP, protobuf, testing, Delta Lake)
 ├── Justfile                    ← all runnable commands (see below)
 ├── docker-compose.yaml         ← standalone Spark 4.1.1 cluster (1 master + 3 workers)
 ├── README.md                   ← human-facing setup guide
