@@ -2,7 +2,7 @@
 
 A [uv](https://docs.astral.sh/uv/)-managed Python project for learning and
 experimenting with [Spark Declarative Pipelines (SDP)](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html)
-on PySpark **4.1.1**.
+on PySpark **4.2.1**.
 
 ## Layout
 
@@ -24,8 +24,11 @@ sdp-playground/
 
 ## Requirements
 
-- Python 3.10+
-- Java 17 (PySpark 4.1.1 requirement)
+The root [Nix + direnv development shell](../README.md#development-shell-nix--direnv)
+provides these tools automatically. For a manual setup:
+
+- Python 3.14+
+- Java 17 or later
 - [uv](https://docs.astral.sh/uv/)
 
 ## Setup
@@ -37,8 +40,11 @@ cd sdp-playground
 uv sync
 ```
 
-This installs `pyspark[pipelines]==4.1.1` along with `pytest` and `pytest-cov`
+This installs `pyspark[pipelines]==4.2.1` along with `pytest` and `pytest-cov`
 into a local `.venv/`.
+
+The pandas dependency is constrained to `>=2.3.3,<3`: this provides Python 3.14
+wheels while staying within Spark's supported pandas versions.
 
 ## Running the example pipeline
 

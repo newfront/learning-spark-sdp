@@ -1,6 +1,6 @@
 services:
   spark-master:
-    image: apache/spark:4.1.1-java21-python3
+    image: apache/spark:4.2.1-java21-python3
     container_name: spark-master
     hostname: spark-master
     entrypoint: ["/bin/bash", "-c", "/opt/spark/sbin/start-connect-server.sh && exec /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
@@ -25,7 +25,7 @@ services:
       - spark-net
 
   spark-worker-1:
-    image: apache/spark:4.1.1-java21-python3
+    image: apache/spark:4.2.1-java21-python3
     container_name: spark-worker-1
     hostname: spark-worker-1
     entrypoint: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
@@ -44,7 +44,7 @@ services:
       - spark-net
 
   spark-worker-2:
-    image: apache/spark:4.1.1-java21-python3
+    image: apache/spark:4.2.1-java21-python3
     container_name: spark-worker-2
     hostname: spark-worker-2
     entrypoint: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
@@ -61,7 +61,7 @@ services:
       - spark-net
 
   spark-worker-3:
-    image: apache/spark:4.1.1-java21-python3
+    image: apache/spark:4.2.1-java21-python3
     container_name: spark-worker-3
     hostname: spark-worker-3
     entrypoint: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]

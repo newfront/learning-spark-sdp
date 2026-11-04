@@ -1,16 +1,18 @@
 [project]
 name = "sdp-playground"
 version = "0.1.0"
-description = "Spark Declarative Pipelines (SDP) learning playground using PySpark 4.1.1"
+description = "Spark Declarative Pipelines (SDP) learning playground using PySpark 4.2.1"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 dependencies = [
-    "pyspark[pipelines]==4.1.1",
+    "pyspark[pipelines]==4.2.1",
+    # Python 3.14 wheels are available from 2.3.3; Spark does not yet support 3.x.
+    "pandas>=2.3.3,<3",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.3",
+    "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
 ]
 

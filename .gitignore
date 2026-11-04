@@ -15,6 +15,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!sdp-playground/example_pipeline/lib/
 lib64/
 parts/
 sdist/
@@ -137,7 +138,7 @@ celerybeat.pid
 # Environments
 .env
 .env-*
-.envrc
+.direnv/
 .venv
 env/
 venv/

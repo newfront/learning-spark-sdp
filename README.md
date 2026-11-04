@@ -6,10 +6,60 @@ This is environment created to build up the mental muscle to master the craft of
 
 ## Local Spark Cluster
 
-The `docker-compose.yaml` spins up a standalone Apache Spark 4.1.1 cluster with one master and three workers.
+The `docker-compose.yaml` spins up a standalone Apache Spark 4.2.1 cluster with one master and three workers.
 
-### Requirements
+### Development shell (Nix + direnv)
 
+The repository includes a pinned Nix flake with Python 3.14 (matching
+`sdp-playground/.python-version`), Java 17, `uv`, `just`, and the Docker/Compose
+CLI. It sets `JAVA_HOME` and configures `uv` to use the Nix-provided Python.
+Linux and macOS on x86-64 and ARM64 are supported.
+
+1. Install [Nix](https://nixos.org/download/) and
+   [direnv](https://direnv.net/docs/installation.html). Enable flakes by adding
+   this to `~/.config/nix/nix.conf`:
+
+   ```ini
+   experimental-features = nix-command flakes
+   ```
+
+   On NixOS, set `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
+   in your system configuration instead.
+
+2. Add the direnv hook to your shell configuration, then restart your shell:
+
+   ```bash
+   # ~/.bashrc
+   eval "$(direnv hook bash)"
+   # Or ~/.zshrc
+   eval "$(direnv hook zsh)"
+   ```
+
+3. From the repository root, authorize the checked-in `.envrc` once and install
+   the Python dependencies:
+
+   ```bash
+   direnv allow
+   just sync
+   ```
+
+After that, entering this directory (or its subdirectories) automatically loads
+the development environment; leaving unloads it. The first load downloads the
+Nix dependencies. [nix-direnv](https://github.com/nix-community/nix-direnv) is
+optional and caches the shell for faster subsequent loads.
+
+Without direnv, run `nix develop` from the repository root, then `just sync`.
+Python dependencies live in `sdp-playground/.venv/`; use `uv run` or the `just`
+recipes to run them. `flake.lock` pins the toolchain; update it deliberately with
+`nix flake update`.
+
+Install and start a Docker engine separately (Docker Engine on Linux or Docker
+Desktop on macOS). The shell supplies the CLI; the cluster recipes need access
+to a running daemon.
+
+### Manual requirements (without Nix)
+
+- Python 3.14 and Java 17 or later
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - [just](https://just.systems/) — command runner (replaces `make`)
 
@@ -79,6 +129,6 @@ docker compose down       # stop
 
 The [`sdp-playground/`](./sdp-playground) directory is a `uv`-managed Python
 project for learning [Spark Declarative Pipelines](https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html)
-on PySpark 4.1.1. It contains an example pipeline (Python + SQL materialized
+on PySpark 4.2.1. It contains an example pipeline (Python + SQL materialized
 views) and pytest-based tests for the underlying transformation logic. See
 [`sdp-playground/README.md`](./sdp-playground/README.md) for usage details.

@@ -40,7 +40,7 @@ the high-level, dataset-oriented pipeline API introduced in Apache Spark 4.x.
 
 The primary sub-project is [`sdp-playground/`](./sdp-playground), a
 [uv](https://docs.astral.sh/uv/)-managed Python project running
-**PySpark 4.1.1** that contains an example SDP pipeline and a pytest test suite.
+**PySpark 4.2.1** with **Python 3.14** that contains an example SDP pipeline and a pytest test suite.
 
 ---
 
@@ -53,10 +53,10 @@ learning-spark-sdp/
 │   ├── rules/                  ← always-apply working agreements
 │   └── skills/                 ← situational playbooks (SDP, protobuf, testing, Delta Lake)
 ├── Justfile                    ← all runnable commands (see below)
-├── docker-compose.yaml         ← standalone Spark 4.1.1 cluster (1 master + 3 workers)
+├── docker-compose.yaml         ← standalone Spark 4.2.1 cluster (1 master + 3 workers)
 ├── README.md                   ← human-facing setup guide
 └── sdp-playground/
-    ├── pyproject.toml          ← uv project (pyspark[pipelines]==4.1.1, pytest)
+    ├── pyproject.toml          ← uv project (pyspark[pipelines]==4.2.1, pytest)
     ├── uv.lock
     ├── example_pipeline/       ← a self-contained SDP pipeline project
     │   ├── spark-pipeline.yml  ← pipeline spec (name, storage root, libraries glob)
@@ -223,7 +223,7 @@ cd sdp-playground && uv run pytest --cov=lib --cov-branch --cov-report=term-miss
 | Resource | URL |
 |---|---|
 | SDP Programming Guide | https://spark.apache.org/docs/latest/declarative-pipelines-programming-guide.html |
-| PySpark 4.1.1 Release Notes | https://spark.apache.org/releases/spark-release-4-1-1.html |
+| PySpark 4.2.1 Release Notes | https://spark.apache.org/releases/spark-release-4-2-1.html |
 | Spark Connect Overview | https://spark.apache.org/docs/latest/spark-connect-overview.html |
 | `create-sdp-pipeline` Cursor skill (Lisa Cao) | https://github.com/lisancao/pyspark-sdp/tree/main/.cursor/skills/create-sdp-pipeline |
 | uv documentation | https://docs.astral.sh/uv/ |
