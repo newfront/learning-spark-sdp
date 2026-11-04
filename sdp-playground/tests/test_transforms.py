@@ -6,9 +6,8 @@ active SDP runtime, since the SDP decorators are only applied in
 """
 
 import pytest
-from pyspark.sql import SparkSession
-
 from lib.transforms import add_doubled, filter_even, filter_large_doubled
+from pyspark.sql import SparkSession
 
 
 class TestFilterEven:

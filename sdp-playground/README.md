@@ -48,6 +48,22 @@ of their working directory. No `PYTHONPATH` override is needed.
 The pandas dependency is constrained to `>=2.3.3,<3`: this provides Python 3.14
 wheels while staying within Spark's supported pandas versions.
 
+### VS Code
+
+Open the repository root (`learning-spark-sdp`) in VS Code. The checked-in
+workspace settings point Python and the recommended `astral-sh.ty` extension at
+`sdp-playground/.venv/bin/python`; run `just sync` first to create that environment.
+
+Install the recommended **ty** VS Code extension (`astral-sh.ty`) from the
+Extensions panel. The extension uses ty from this project's dev dependencies.
+To check from the repository root, run `uv run --project sdp-playground ty check --project sdp-playground .`.
+
+If VS Code already remembers another interpreter, press **Ctrl+Shift+P**, run
+**Python: Select Interpreter**, choose **Enter interpreter path...**, and select
+`sdp-playground/.venv/bin/python`. This is a one-time step because VS Code keeps
+existing selections instead of overriding them with the workspace default.
+Run **Developer: Reload Window** to restart the extensions with these settings.
+
 ## Running the example pipeline
 
 The `example_pipeline/` directory is a self-contained SDP pipeline project.

@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "astral-sh.ty"
+  ],
+  "unwantedRecommendations": [
+    "ms-python.mypy-type-checker"
+  ]
+}

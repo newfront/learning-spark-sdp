@@ -1,8 +1,8 @@
 """The CLI must be able to import helpers without pytest's import path."""
 
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 
 def test_transforms_import_outside_project(tmp_path: Path) -> None:

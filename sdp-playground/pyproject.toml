@@ -18,6 +18,7 @@ dependencies = [
 dev = [
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
+    "ty>=0.0.97",
 ]
 
 [tool.hatch.build.targets.wheel]

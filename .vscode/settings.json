@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/sdp-playground/.venv/bin/python",
+  "ty.interpreter": "${workspaceFolder}/sdp-playground/.venv/bin/python",
+  "ty.importStrategy": "fromEnvironment",
+  "ty.diagnosticMode": "workspace"
+}
