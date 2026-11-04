@@ -14,8 +14,7 @@ from pyspark.sql import SparkSession
 def spark() -> Iterator[SparkSession]:
     """Session-scoped local SparkSession suitable for unit tests."""
     session = (
-        SparkSession.builder
-        .appName("sdp-playground-tests")
+        SparkSession.builder.appName("sdp-playground-tests")
         .master("local[2]")
         .config("spark.sql.shuffle.partitions", "2")
         .config("spark.ui.enabled", "false")

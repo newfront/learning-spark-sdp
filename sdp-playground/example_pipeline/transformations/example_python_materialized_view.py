@@ -4,10 +4,9 @@ The pure transformation logic lives in ``example_pipeline.lib.transforms``
 so it can be unit-tested independently of the SDP runtime.
 """
 
+from lib.transforms import add_doubled, filter_even
 from pyspark import pipelines as dp
 from pyspark.sql import DataFrame, SparkSession
-
-from lib.transforms import add_doubled, filter_even
 
 
 @dp.materialized_view
@@ -16,9 +15,7 @@ def source_numbers() -> DataFrame:
     return SparkSession.active().range(20)
 
 
-@dp.materialized_view(
-    spark_conf={}
-)
+@dp.materialized_view(spark_conf={})
 def even_numbers() -> DataFrame:
     """Even integers from ``source_numbers``."""
     return filter_even(SparkSession.active().table("source_numbers"))

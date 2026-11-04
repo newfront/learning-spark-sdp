@@ -76,3 +76,23 @@ sync:
 # Run the test suite with branch coverage
 test:
     cd sdp-playground && uv run pytest --cov=lib --cov-branch --cov-report=term-missing
+
+# Fix and format Python and SQL, then check for remaining SQL lint issues
+fix:
+    cd sdp-playground && uv run ruff check --fix example_pipeline tests
+    cd sdp-playground && uv run ruff format example_pipeline tests
+    cd sdp-playground && uv run sqlfluff fix example_pipeline
+    cd sdp-playground && uv run sqlfmt example_pipeline
+    cd sdp-playground && uv run sqlfluff lint example_pipeline
+
+# Lint pipeline SQL using the Spark SQL dialect
+sql-lint:
+    cd sdp-playground && uv run sqlfluff lint example_pipeline
+
+# Format pipeline SQL in place
+sql-format:
+    cd sdp-playground && uv run sqlfmt example_pipeline
+
+# Check SQL lint and formatting without modifying files
+sql-check: sql-lint
+    cd sdp-playground && uv run sqlfmt --check example_pipeline

@@ -107,6 +107,13 @@ just cluster-down                                    # tear it down
 
 Run `just` (or `just --list`) at any time to see all available recipes.
 
+Use `just fix` to apply Ruff fixes and formatting plus SQLFluff fixes and sqlfmt
+formatting across the Python and SQL code.
+
+For SQL alone, use `just sql-format` to format pipeline files and `just sql-check` to
+run SQLFluff linting plus sqlfmt's formatting check. Both tools are installed by
+`just sync` and configured in `sdp-playground/pyproject.toml`.
+
 ### Cluster web UIs
 
 | Service | URL |

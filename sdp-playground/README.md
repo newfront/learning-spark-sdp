@@ -94,6 +94,30 @@ uv run spark-pipelines run
 > (`file://`, `s3a://`, `hdfs://`, …). Update it if you clone this repo to a
 > different path.
 
+## SQL linting and formatting
+
+`just sync` installs SQLFluff and sqlfmt (`shandy-sqlfmt`) as project dev
+dependencies. Both are configured in `pyproject.toml`:
+
+- SQLFluff uses the `sparksql` dialect and the raw templater for SDP SQL files.
+- sqlfmt uses its Spark-compatible `polyglot` dialect and an 88-character line
+  length. SQLFluff's capitalization and layout rules are aligned with sqlfmt.
+
+SQL keywords, unquoted identifiers, function names, types, and boolean/null
+literals use **lowercase**. String contents and quoted identifiers retain their
+case.
+
+From the repository root:
+
+```bash
+just fix         # Ruff fixes/formatting, SQLFluff fixes, sqlfmt, then SQL lint
+just sql-format  # format all SQL under example_pipeline in place
+just sql-lint    # lint SQL without changing files
+just sql-check   # lint and check formatting (suitable for CI)
+```
+
+Use `sql-format` for formatting; `sql-check` reports any remaining lint issues.
+
 ## Running the tests
 
 From `sdp-playground/`:

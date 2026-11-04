@@ -18,11 +18,50 @@ dependencies = [
 dev = [
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
+    "ruff",
+    "shandy-sqlfmt>=0.32.0",
+    "sqlfluff>=4.5.0",
     "ty>=0.0.97",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["example_pipeline/lib"]
+
+[tool.sqlfmt]
+dialect = "polyglot"
+line_length = 88
+
+[tool.sqlfluff.core]
+dialect = "sparksql"
+templater = "raw"
+max_line_length = 88
+# Let sqlfmt own layout; these SQLFluff rules conflict with its formatting.
+exclude_rules = [
+    "layout.indent",
+    "layout.cte_bracket",
+    "layout.keyword_newline",
+    "layout.cte_newline",
+    "layout.select_targets",
+    "layout.spacing",
+]
+
+[tool.sqlfluff.rules."capitalisation.keywords"]
+capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules."capitalisation.identifiers"]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules."capitalisation.functions"]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules."capitalisation.literals"]
+capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules."capitalisation.types"]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules."convention.terminator"]
+multiline_newline = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
