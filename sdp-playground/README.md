@@ -41,7 +41,9 @@ uv sync
 ```
 
 This installs `pyspark[pipelines]==4.2.1` along with `pytest` and `pytest-cov`
-into a local `.venv/`.
+into a local `.venv/`. It also installs the project's `lib` package in editable
+mode, so both the SDP CLI and tests can import the shared transforms regardless
+of their working directory. No `PYTHONPATH` override is needed.
 
 The pandas dependency is constrained to `>=2.3.3,<3`: this provides Python 3.14
 wheels while staying within Spark's supported pandas versions.
